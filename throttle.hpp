@@ -6,46 +6,45 @@
 #include <sstream>
 #include <pthread.h>
 
+// Maximum config file line length
+#define LINE_LENGTH 1024
+
 //---------------------------------------------
 // Class for reading in the configuration file
 //---------------------------------------------
 class Conf {
 public:
-	Conf(std::string &config_fn);
+	Conf(const char *config_fn);
 	template<typename T>
-		void GetAttr<T>(std::string &name, T *output);
+		void GetAttr(const std::string &name, T *output);
 
 protected:
 	// attributes
 	std::map<std::string, std::string> attributes;
 
 private:
-	template<typename T> static void parse(std::string &str, T *ret);
+	template<typename T> static void parse(const std::string &str, T *ret);
 };
 
-template<typename T> void Conf::GetAttr<T>(std::string &name, T *output)
+template<typename T> void Conf::GetAttr(const std::string &name, T *output)
 {
 	auto attr = attributes.find(name);
 	if (attr != attributes.end())
-		parse(attr.second, output);
+		parse(attr->second, output);
 	else
 		throw std::runtime_error("No such attribute: " + name);
 }
 
 // Well, let's try something general first
-template<typename T> void Conf::parse<T>(std::string &str, T *ret)
+template<typename T> void Conf::parse(const std::string &str, T *ret)
 {
 	std::istringstream stream(str);
 	stream >> *ret;
 }
 
-// For strings we can do better
-template<> void Conf::parse<std::string>(std::string &str, std::string *ret)
-{
-	*ret = str;
-}
-
-// ... and there might be integer vectors. Do we have to handle them separately?
+// ... but we might want to specialize
+template<> void Conf::parse<std::string>(const std::string &str, std::string *ret);
+template<> void Conf::parse<std::vector<int>>(const std::string &str, std::vector<int> *ret);
 
 //----------------------------------
 // Class handling the command queue
