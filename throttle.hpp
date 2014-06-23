@@ -9,6 +9,11 @@
 // Maximum config file line length
 #define LINE_LENGTH 1024
 
+// forward declaring the classes
+class Conf;
+class CommQueue;
+class Throttle;
+
 //---------------------------------------------
 // Class for reading in the configuration file
 //---------------------------------------------
@@ -51,7 +56,7 @@ template<> void Conf::parse<std::set<int>>(const std::string &str, std::set<int>
 //----------------------------------
 class CommQueue {
 public:
-	CommQueue(std::string &pipe_fn = "/var/run/throttle");
+	CommQueue(Throttle *parent, const char *pipe_fn = "/var/run/throttle");
 
 protected:
 	// where we write to
@@ -72,13 +77,16 @@ protected:
 //---------------------------------------
 class Throttle {
 public:
-	Throttle(std::string &config_fn);
+	Throttle(const char *config_fn);
 
 	friend CommQueue;
 protected:
 	void adjust();
 	int readTemp() const;
-	int writeFreq();
+	void writeFreq();
+
+	// number of cores
+	int cores;
 
 	// files
 	std::string temp_fn;
@@ -91,6 +99,10 @@ protected:
 	std::set<int> freqs;
 	int freq;
 
+	// dynamics
+	int wait;
+
 	// status & override mechanics
+	CommQueue queue;
 	// ...
 };
