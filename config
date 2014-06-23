@@ -1,0 +1,23 @@
+#!/bin/bash
+echo "# Throttle configuration file"
+
+# System configuration
+echo "# System configuration"
+echo "cores =" $(nproc)
+
+# Where do we get the temperature?
+echo "temp_file = /sys/class/hwmon/hwmon0/device/temp1_input"
+
+# Creating a list of availalabe frequencies
+echo -n "freq_list = "
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
+
+# Where do we write the target maximum temperature?
+echo "freq_set = /sys/devices/system/cpu/cpu%d/cpufreq/scaling_max_freq"
+echo ""
+
+# Write default settings
+echo "# Settings"
+echo "temp_min = 65"
+echo "temp_max = 80"
+echo "wait = 15"
