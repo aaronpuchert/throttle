@@ -20,7 +20,9 @@ Throttle::Throttle(const char *config_fn) : queue(this)
 	conf.GetAttr("wait", &wait);
 
 	// read the current frequency (is that the right thing to do?)
-	std::ifstream freq_file(freq_fn);	// TODO: this won't work
+	const char filename[freq_fn.size() + PADDING];
+	std::snprintf(filename, freq_fn.size() + PADDING, freq_fn, core);
+	std::ofstream freq_file(filename);
 	freq_file >> freq;
 }
 
@@ -67,8 +69,8 @@ void Throttle::writeFreq()
 {
 	// loop over the files, write the frequency in each
 	for (int core=0; core<cores; ++core) {
-		const char filename[freq_fn.size()];
-		std::snprintf(filename, freq_fn.size(), freq_fn, core);
+		const char filename[freq_fn.size() + PADDING];
+		std::snprintf(filename, freq_fn.size() + PADDING, freq_fn, core);
 		std::ofstream freq_file(filename);
 		freq_file << freq;
 	}

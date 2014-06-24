@@ -9,6 +9,9 @@
 // Maximum config file line length
 #define LINE_LENGTH 1024
 
+// Define padding for clock file names
+#define PADDING 4
+
 // forward declaring the classes
 class Conf;
 class CommQueue;
