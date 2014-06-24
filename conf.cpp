@@ -1,19 +1,11 @@
 #include "throttle.hpp"
 
-// Parsing function: for strings we can do better
+/*
+ * Parsing function: for strings we can do better
+ */
 template<> void Conf::parse<std::string>(const std::string &str, std::string *ret)
 {
 	*ret = str;
-}
-
-// ... and for integer vectors
-template<> void Conf::parse<std::set<int>>(const std::string &str, std::set<int> *ret)
-{
-	std::istringstream stream(str);
-	int cur;
-
-	while (stream >> cur)
-		ret->insert(cur);
 }
 
 /*

@@ -32,8 +32,10 @@ protected:
 
 private:
 	template<typename T> static void parse(const std::string &str, T *ret);
+	template<typename T> static void parse(const std::string &str, std::set<T> *ret);
 };
 
+// IMPLEMENTATION OF THE TEMPLATES
 template<typename T> void Conf::GetAttr(const std::string &name, T *output)
 {
 	auto attr = attributes.find(name);
@@ -52,7 +54,16 @@ template<typename T> void Conf::parse(const std::string &str, T *ret)
 
 // ... but we might want to specialize
 template<> void Conf::parse<std::string>(const std::string &str, std::string *ret);
-template<> void Conf::parse<std::set<int>>(const std::string &str, std::set<int> *ret);
+
+// For sets we do something completely different
+template<typename T> void Conf::parse(const std::string &str, std::set<T> *ret)
+{
+	std::istringstream stream(str);
+	T cur;
+
+	while (stream >> cur)
+		ret->insert(cur);
+}
 
 //----------------------------------
 // Class handling the command queue
