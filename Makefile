@@ -1,0 +1,39 @@
+# Settings
+CXX ?= clang++
+CXXFLAGS = -Wall -std=c++11 -O3
+LFLAGS = -Wall
+
+# Files
+CPPS := throttle.cpp conf.cpp
+OBJS := $(patsubst %.cpp, %.o, $(CPPS))
+DEBUG_OBJS := $(patsubst %.cpp, %-debug.o, $(CPPS))
+
+# Compiling
+throttle: $(OBJS)
+	$(CXX) $(LFLAGS) -o throttle $(OBJS)
+
+$(OBJS): %.o: %.cpp throttle.hpp
+	$(CXX) -c $(CXXFLAGS) -o $@ $<
+
+# Debug
+debug: throttle-debug
+
+throttle-debug: $(DEBUG_OBJS)
+	$(CXX) -g $(LFLAGS) -o throttle-debug $(DEBUG_OBJS)
+
+$(DEBUG_OBJS): %-debug.o: %.cpp throttle.hpp
+	$(CXX) -c -g $(CXXFLAGS) -o $@ $<
+
+# Installation
+install: throttle throttle.conf
+
+throttle.conf:
+	touch throttle.conf
+	./config >throttle.conf
+
+# Cleaning up
+clean:
+	-rm *.o throttle
+	-rm throttle.conf
+
+.PHONY: debug install clean
