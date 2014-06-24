@@ -76,14 +76,15 @@ protected:
 	// where we write to
 	Throttle *Throt;
 
-	// thread main function
+	// thread handle and main function
+	pthread_t thread;
 	static void *watchPipe(void *);
 
 	// look for input and process
-	void processCommand(std::string &comm);
+	void processCommand(const std::string comm);
 
-	// command pipe
-	std::ifstream comm_pipe;
+	// command pipe file name
+	std::string comm_pipe;
 };
 
 //---------------------------------------
@@ -92,6 +93,7 @@ protected:
 class Throttle {
 public:
 	Throttle(const char *config_fn);
+	void run();
 
 	friend CommQueue;
 protected:
@@ -99,6 +101,7 @@ protected:
 	int readTemp() const;
 	void writeFreq();
 
+	// SETTINGS
 	// number of cores
 	int cores;
 
@@ -114,9 +117,11 @@ protected:
 	int freq;
 
 	// dynamics
-	int wait;
+	int wait_after_adjust;
+	const int wait = 1;
 
-	// status & override mechanics
+	// STATUS & Override mechanics
 	CommQueue queue;
+	bool term;
 	// ...
 };

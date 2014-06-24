@@ -1,12 +1,15 @@
 # Settings
 CXX ?= clang++
 CXXFLAGS = -Wall -std=c++11 -O3
-LFLAGS = -Wall
+LFLAGS = -Wall $(LIBOPTIONS)
 
-# Files
+# Files and libraries
 CPPS := throttle.cpp conf.cpp
 OBJS := $(patsubst %.cpp, %.o, $(CPPS))
 DEBUG_OBJS := $(patsubst %.cpp, %-debug.o, $(CPPS))
+
+LIBS := pthread
+LIBOPTIONS := $(patsubst %, -l%, $(LIBS))
 
 # Compiling
 throttle: $(OBJS)

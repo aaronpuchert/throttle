@@ -5,7 +5,7 @@
  * Constructor of a Throttle object. The argument config_fn
  * sould be the name of the configuration file.
  */
-Throttle::Throttle(const char *config_fn) : queue(this)
+Throttle::Throttle(const char *config_fn) : queue(this), term(false)
 {
 	// open the configuration file
 	Conf conf(config_fn);
@@ -17,7 +17,7 @@ Throttle::Throttle(const char *config_fn) : queue(this)
 	conf.GetAttr("freq_list", &freqs);
 	conf.GetAttr("temp_min", &temp_min);
 	conf.GetAttr("temp_max", &temp_max);
-	conf.GetAttr("wait", &wait);
+	conf.GetAttr("wait", &wait_after_adjust);
 
 	// read the current frequency (is that the right thing to do?)
 	const char filename[freq_fn.size() + PADDING];
@@ -45,10 +45,10 @@ int Throttle::adjust()
 	if (new_freq != freqs.end()) {
 		freq = *new_freq;
 		writeFreq();
-		return wait;
+		return wait_after_adjust;
 	}
 	else
-		return 1;
+		return wait;
 }
 
 /*
@@ -73,5 +73,15 @@ void Throttle::writeFreq()
 		std::snprintf(filename, freq_fn.size() + PADDING, freq_fn, core);
 		std::ofstream freq_file(filename);
 		freq_file << freq;
+	}
+}
+
+/*
+ * Run the throttle daemon. This function is unlikely to stop on its own.
+ */
+void Throttle::run()
+{
+	while (!term) {
+		sleep(adjust());
 	}
 }

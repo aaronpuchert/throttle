@@ -1,4 +1,7 @@
 #include "throttle.hpp"
+#include <stdexcept>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /*
  * Parsing function: for strings we can do better
@@ -36,4 +39,53 @@ Conf::Conf(const char *config_fn) {
 		// write into map
 		attributes[name] = std::string(line);
 	}
+}
+
+/*
+ * Construct a command queue. We want to now the parent, where we can write changes to,
+ * and which pipe to listen on.
+ */
+CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent), comm_pipe(pipe_fn)
+{
+	// create the pipe
+	if (!mkfifo(pipe_fn, 0666))
+		throw std::runtime_error(std::string("Could not create pipe ") + std::string(pipe_fn));
+	comm_pipe = pipe_fn;
+
+	// start the thread
+	if (!pthread_create(&thread, NULL, watchPipe, this))
+		throw std::runtime_error("Could not create thread.");
+}
+
+/*
+ * Thread main function: `void *obj` should point to the generating object.
+ * We watch the pipe for input.
+ */
+void *CommQueue::watchPipe(void *obj)
+{
+	CommQueue *that = (CommQueue *)obj;
+
+	// open the pipe
+	std::ifstream pipe(that->comm_pipe, std::ifstream::in);
+
+	// watch for input
+	char buf[LINE_LENGTH];
+	int read;
+	do {
+		pipe.getline(buf, LINE_LENGTH);
+		that->processCommand(std::string(buf));
+	} while (buf[0] != '*');
+
+	that->Throt->term = true;
+
+	return 0;
+}
+
+/*
+ * Process a command coming through the pipe.
+ */
+void CommQueue::processCommand(const std::string comm)
+{
+	// parse command
+	// change appropriate variables
 }
