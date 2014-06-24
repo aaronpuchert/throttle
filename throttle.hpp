@@ -44,7 +44,7 @@ template<typename T> void Conf::parse(const std::string &str, T *ret)
 
 // ... but we might want to specialize
 template<> void Conf::parse<std::string>(const std::string &str, std::string *ret);
-template<> void Conf::parse<std::vector<int>>(const std::string &str, std::vector<int> *ret);
+template<> void Conf::parse<std::set<int>>(const std::string &str, std::set<int> *ret);
 
 //----------------------------------
 // Class handling the command queue

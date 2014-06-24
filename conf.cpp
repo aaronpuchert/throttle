@@ -7,17 +7,19 @@ template<> void Conf::parse<std::string>(const std::string &str, std::string *re
 }
 
 // ... and for integer vectors
-template<> void Conf::parse<std::vector<int>>(const std::string &str, std::vector<int> *ret)
+template<> void Conf::parse<std::set<int>>(const std::string &str, std::set<int> *ret)
 {
 	std::istringstream stream(str);
 	int cur;
 
 	while (stream >> cur)
-		ret->push_back(cur);
+		ret->insert(cur);
 }
 
-// Configuration reader
-// This function is guaranteed to read in all syntactically correct files, but might also accept others.
+/*
+ * Configuration reader.
+ * This function is guaranteed to read in all syntactically correct files, but might also accept others.
+ */
 Conf::Conf(const char *config_fn) {
 	// open the file
 	std::ifstream conf_file(config_fn);
