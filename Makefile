@@ -4,7 +4,7 @@ CXXFLAGS = -Wall -std=c++11 -O3
 LFLAGS = -Wall $(LIBOPTIONS)
 
 # Files and libraries
-CPPS := throttle.cpp conf.cpp
+CPPS := main.cpp throttle.cpp conf.cpp
 OBJS := $(patsubst %.cpp, %.o, $(CPPS))
 DEBUG_OBJS := $(patsubst %.cpp, %-debug.o, $(CPPS))
 
