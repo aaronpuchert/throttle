@@ -29,7 +29,7 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pip
 	freq_file >> freq;
 
 #ifdef DEBUG
-	std::cout << "[Throttle] Initial frequency: " << freq << std::endl;
+	std::cout << "[Throttle] Initial frequency: " << (float)freq/1000 << " MHz" << std::endl;
 #endif
 }
 
@@ -43,7 +43,7 @@ int Throttle::adjust()
 	std::set<int>::iterator new_freq = freqs.end();
 
 #ifdef DEBUG
-	std::cout << "[Throttle] Temperature: " << temp << std::endl;
+	std::cout << "[Throttle] Temperature: " << (float)temp/1000 << "°C"<< std::endl;
 #endif
 
 	// If the temperature exceeds a threshold, find the next best frequency.
@@ -79,7 +79,7 @@ int Throttle::readTemp() const
 void Throttle::writeFreq()
 {
 #ifdef DEBUG
-	std::cout << "[Throttle] New frequency: " << freq << std::endl;
+	std::cout << "[Throttle] New frequency: " << (float)freq/1000 << " MHz" << std::endl;
 #endif
 
 	// loop over the files, write the frequency in each
