@@ -40,7 +40,7 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pip
 int Throttle::adjust()
 {
 	int temp = readTemp();
-	std::set<int>::iterator new_freq;
+	std::set<int>::iterator new_freq = freqs.end();
 
 #ifdef DEBUG
 	std::cout << "[Throttle] Temperature: " << temp << std::endl;
@@ -97,6 +97,7 @@ void Throttle::writeFreq()
 void Throttle::run()
 {
 	while (!term) {
-		sleep(adjust());
+		int waitsec = adjust();
+		sleep(waitsec);
 	}
 }
