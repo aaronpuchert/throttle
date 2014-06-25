@@ -48,7 +48,7 @@ int Throttle::adjust()
 
 	// If the temperature exceeds a threshold, find the next best frequency.
 	if (temp > temp_max)
-		new_freq = freqs.lower_bound(freq)--;
+		new_freq = --freqs.lower_bound(freq);
 	if (temp < temp_min)
 		new_freq = freqs.upper_bound(freq);
 
