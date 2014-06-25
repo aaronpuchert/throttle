@@ -1,5 +1,6 @@
 # ignore conf
 throttle.conf
+throttle-debug.conf
 
 # ignore binaries
 throttle
