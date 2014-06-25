@@ -3,6 +3,12 @@ throttle
 
 Daemon to regulate the maximum CPU clock based on its temperature.
 
+Compilation & Installation
+--------------------------
+After cloning the repository and `cd`ing into the main directory, execute `make` to compile. If you want a debug version, run `make debug` instead. This reads the temperature from  a local file `./temp_input` and writes the frequencies to `./cpu#freq`, where `#` runs through the cores.
+
+You can also install the throttle daemon as a system service. At the moment, this is only tested to work on SuSE Linux. Just execute `sudo make install`. You might want to adjust the settings in `throttle.conf` before. (see below) Uninstalling works similarly by `sudo make uninstall`.
+
 Mechanism
 ---------
 CPU frequency drivers typically regulate the core frequencies based purely on demand. For notebooks however, this is not the only factor to consider, especially if you use them for lengthy computations.

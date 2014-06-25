@@ -41,6 +41,14 @@ pipe:
 
 # Installation
 install: throttle
+	@install --verbose --strip --owner=root throttle /usr/sbin
+	@install --verbose --owner=root throttle.conf /etc
+	@install --verbose --owner=root throttle.service /usr/lib/systemd/system
+
+uninstall:
+	rm -f /usr/sbin/throttle
+	rm -f /etc/throttle.conf
+	rm -f /usr/lib/systemd/system/throttle.service
 
 # Cleaning up
 clean:
@@ -48,4 +56,4 @@ clean:
 	-rm cpu*freq temp_input throttle-debug
 	-rm throttle.conf throttle-debug.conf
 
-.PHONY: debug install clean
+.PHONY: debug install uninstall clean
