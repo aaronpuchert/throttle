@@ -1,6 +1,6 @@
 #include "throttle.hpp"
 
-#ifdef DEBUG
+#ifndef DEBUG
 #define THROTTLE_CONF "throttle.conf"
 #else
 #define THROTTLE_CONF "throttle-debug.conf"
