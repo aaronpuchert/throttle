@@ -25,7 +25,7 @@ throttle-debug: $(DEBUG_OBJS)
 	$(CXX) -g $(LFLAGS) -o throttle-debug $(DEBUG_OBJS)
 
 $(DEBUG_OBJS): %-debug.o: %.cpp throttle.hpp
-	$(CXX) -c -g $(CXXFLAGS) -o $@ $<
+	$(CXX) -c -g -DDEBUG $(CXXFLAGS) -o $@ $<
 
 # Installation
 install: throttle throttle.conf

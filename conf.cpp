@@ -36,6 +36,10 @@ Conf::Conf(const char *config_fn) {
 		conf_file.ignore(LINE_LENGTH, ' ');
 		conf_file.getline(line, LINE_LENGTH);
 
+#ifdef DEBUG
+		std::cout << "[Conf] " << name << " = " << line << std::endl;
+#endif
+
 		// write into map
 		attributes[name] = std::string(line);
 	}
@@ -85,6 +89,10 @@ void *CommQueue::watchPipe(void *obj)
  */
 void CommQueue::processCommand(const std::string comm)
 {
+#ifdef DEBUG
+	std::cout << "[CommQueue] " << comm << std::endl;
+#endif
+
 	// parse command
 	// change appropriate variables
 }

@@ -23,6 +23,10 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pip
 	// read the current frequency (is that the right thing to do?)
 	std::ifstream freq_file(freq_fn_prefix + "0" + freq_fn_suffix);
 	freq_file >> freq;
+
+#ifdef DEBUG
+	std::cout << "[Throttle] Initial frequency: " << freq << std::endl;
+#endif
 }
 
 /*
@@ -33,6 +37,10 @@ int Throttle::adjust()
 {
 	int temp = readTemp();
 	std::set<int>::iterator new_freq;
+
+#ifdef DEBUG
+	std::cout << "[Throttle] Temperature: " << temp << std::endl;
+#endif
 
 	// If the temperature exceeds a threshold, find the next best frequency.
 	if (temp > temp_max)
@@ -66,6 +74,10 @@ int Throttle::readTemp() const
  */
 void Throttle::writeFreq()
 {
+#ifdef DEBUG
+	std::cout << "[Throttle] New frequency: " << freq << std::endl;
+#endif
+
 	// loop over the files, write the frequency in each
 	for (int core=0; core<cores; ++core) {
 		std::ostringstream freq_fn;

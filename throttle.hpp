@@ -6,6 +6,10 @@
 #include <sstream>
 #include <pthread.h>
 
+#ifdef DEBUG
+#include <iostream>
+#endif
+
 // Maximum config file line length
 #define LINE_LENGTH 1024
 
