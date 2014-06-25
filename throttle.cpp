@@ -20,6 +20,10 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pip
 	conf.GetAttr("temp_max", &temp_max);
 	conf.GetAttr("wait", &wait_after_adjust);
 
+	// multiply temperatures with 1000
+	temp_min *= 1000;
+	temp_max *= 1000;
+
 	// read the current frequency (is that the right thing to do?)
 	std::ifstream freq_file(freq_fn_prefix + "0" + freq_fn_suffix);
 	freq_file >> freq;
