@@ -70,7 +70,7 @@ template<typename T> void Conf::parse(const std::string &str, std::set<T> *ret)
 //----------------------------------
 class CommQueue {
 public:
-	CommQueue(Throttle *parent, const char *pipe_fn = "/var/run/throttle");
+	CommQueue(Throttle *parent, const char *pipe_fn);
 
 protected:
 	// where we write to
@@ -92,7 +92,7 @@ protected:
 //---------------------------------------
 class Throttle {
 public:
-	Throttle(const char *config_fn);
+	Throttle(const char *config_fn, const char* pipe_fn);
 	void run();
 
 	friend CommQueue;
