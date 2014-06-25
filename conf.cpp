@@ -1,6 +1,5 @@
 #include "throttle.hpp"
 #include <stdexcept>
-#include <sys/stat.h>
 #include <unistd.h>
 
 /*
@@ -50,9 +49,6 @@ Conf::Conf(const char *config_fn) {
  */
 CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent), comm_pipe(pipe_fn)
 {
-	// create the pipe
-	if (mkfifo(pipe_fn, 0666))
-		throw std::runtime_error(std::string("Could not create pipe \"") + std::string(pipe_fn) + std::string("\"."));
 	comm_pipe = pipe_fn;
 
 	// start the thread

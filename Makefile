@@ -24,7 +24,7 @@ throttle.conf:
 	./config >throttle.conf
 
 # Debug
-debug: throttle-debug throttle-debug.conf
+debug: throttle-debug throttle-debug.conf pipe
 
 throttle-debug: $(DEBUG_OBJS)
 	$(CXX) -g $(LFLAGS) -o throttle-debug $(DEBUG_OBJS)
@@ -35,6 +35,9 @@ $(DEBUG_OBJS): %-debug.o: %.cpp throttle.hpp
 throttle-debug.conf:
 	touch throttle-debug.conf
 	./config debug >throttle-debug.conf
+
+pipe:
+	mkfifo pipe
 
 # Installation
 install: throttle
