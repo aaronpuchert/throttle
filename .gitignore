@@ -4,3 +4,7 @@ throttle.conf
 # ignore binaries
 throttle
 *.o
+
+# KDevelop files
+*.kdev4
+.kdev4/
