@@ -70,7 +70,6 @@ void *CommQueue::watchPipe(void *obj)
 
 	// watch for input
 	char buf[LINE_LENGTH];
-	int read;
 	do {
 		pipe.getline(buf, LINE_LENGTH);
 		that->processCommand(std::string(buf));

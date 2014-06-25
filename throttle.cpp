@@ -1,5 +1,5 @@
 #include "throttle.hpp"
-#include <cstdio>
+#include <unistd.h>
 
 /*
  * Constructor of a Throttle object. The argument config_fn
@@ -13,16 +13,15 @@ Throttle::Throttle(const char *config_fn) : queue(this), term(false)
 	// read all variables
 	conf.GetAttr("cores", &cores);
 	conf.GetAttr("temp_file", &temp_fn);
-	conf.GetAttr("freq_set", &freq_fn);
+	conf.GetAttr("freq_set_prefix", &freq_fn_prefix);
+	conf.GetAttr("freq_set_suffix", &freq_fn_suffix);
 	conf.GetAttr("freq_list", &freqs);
 	conf.GetAttr("temp_min", &temp_min);
 	conf.GetAttr("temp_max", &temp_max);
 	conf.GetAttr("wait", &wait_after_adjust);
 
 	// read the current frequency (is that the right thing to do?)
-	const char filename[freq_fn.size() + PADDING];
-	std::snprintf(filename, freq_fn.size() + PADDING, freq_fn, core);
-	std::ofstream freq_file(filename);
+	std::ifstream freq_file(freq_fn_prefix + "0" + freq_fn_suffix);
 	freq_file >> freq;
 }
 
@@ -37,7 +36,7 @@ int Throttle::adjust()
 
 	// If the temperature exceeds a threshold, find the next best frequency.
 	if (temp > temp_max)
-		new_freq = freqs.lower_bound(freq)-1;
+		new_freq = freqs.lower_bound(freq)--;
 	if (temp < temp_min)
 		new_freq = freqs.upper_bound(freq);
 
@@ -69,9 +68,9 @@ void Throttle::writeFreq()
 {
 	// loop over the files, write the frequency in each
 	for (int core=0; core<cores; ++core) {
-		const char filename[freq_fn.size() + PADDING];
-		std::snprintf(filename, freq_fn.size() + PADDING, freq_fn, core);
-		std::ofstream freq_file(filename);
+		std::ostringstream freq_fn;
+		freq_fn << freq_fn_prefix << core << freq_fn_suffix;
+		std::ofstream freq_file(freq_fn.str());
 		freq_file << freq;
 	}
 }

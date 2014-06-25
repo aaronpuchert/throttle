@@ -97,7 +97,7 @@ public:
 
 	friend CommQueue;
 protected:
-	void adjust();
+	int adjust();
 	int readTemp() const;
 	void writeFreq();
 
@@ -107,7 +107,7 @@ protected:
 
 	// files
 	std::string temp_fn;
-	std::string freq_fn;
+	std::string freq_fn_prefix, freq_fn_suffix;
 
 	// temperature thresholds
 	int temp_max, temp_min;
