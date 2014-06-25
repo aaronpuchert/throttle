@@ -22,10 +22,9 @@ Conf::Conf(const char *config_fn) {
 	// read every line and put it in the map
 	char line[LINE_LENGTH];
 	std::string name;
-	while (conf_file) {
-		// parse: first comes the name of the command
-		conf_file >> name;
 
+	// parse: first comes the name of the command
+	while (conf_file >> name) {
 		// if line starts with '#', ignore it
 		if (name[0] == '#') {
 			conf_file.ignore(LINE_LENGTH, '\n');
