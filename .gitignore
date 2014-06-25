@@ -3,7 +3,12 @@ throttle.conf
 
 # ignore binaries
 throttle
+throttle-debug
 *.o
+
+# debug files
+cpu*freq
+temp_input
 
 # KDevelop files
 *.kdev4

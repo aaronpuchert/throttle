@@ -37,6 +37,7 @@ throttle.conf:
 # Cleaning up
 clean:
 	-rm *.o throttle
+	-rm cpu*freq temp_input throttle-debug
 	-rm throttle.conf
 
 .PHONY: debug install clean
