@@ -81,12 +81,12 @@ void Throttle::writeFreq() const
 #ifdef DEBUG
 	std::cout << "[Throttle] New frequency: " << (float)freq/1000 << " MHz" << std::endl;
 #endif
+	std::string freq_fn = freq_fn_prefix + '#' + freq_fn_suffix;
 
 	// loop over the files, write the frequency in each
 	for (int core=0; core<cores; ++core) {
-		std::ostringstream freq_fn;
-		freq_fn << freq_fn_prefix << core << freq_fn_suffix;
-		std::ofstream freq_file(freq_fn.str());
+		freq_fn[freq_fn_prefix.length()] = '0' + core;
+		std::ofstream freq_file(freq_fn);
 		freq_file << freq;
 	}
 }
