@@ -7,7 +7,7 @@ ExecStartPre=/usr/bin/mkfifo /var/run/throttle
 ExecStartPre=/usr/bin/chown root:users /var/run/throttle
 ExecStartPre=/usr/bin/chmod 660 /var/run/throttle
 ExecStart=/usr/sbin/throttle /etc/throttle.conf /var/run/throttle
-ExecStop=/usr/bin/echo "*" >/var/run/throttle
+ExecStop=/usr/bin/echo "quit" >/var/run/throttle
 ExecStopPost=/usr/bin/rm -f /var/run/throttle
 
 [Install]

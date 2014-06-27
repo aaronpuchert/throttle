@@ -89,6 +89,17 @@ protected:
 
 	// command pipe file name
 	std::string comm_pipe;
+
+	// commands
+	enum Command {
+		SET_MAX,
+		SET_MIN,
+		SET_FREQ,
+		RESET,
+		QUIT
+	};
+
+	std::map<std::string, Command> translate;
 };
 
 //---------------------------------------

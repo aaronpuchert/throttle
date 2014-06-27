@@ -49,7 +49,12 @@ Conf::Conf(const char *config_fn) {
  */
 CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent), comm_pipe(pipe_fn)
 {
-	comm_pipe = pipe_fn;
+	// init translation table
+	translate["max"] = SET_MAX;
+	translate["min"] = SET_MIN;
+	translate["freq"] = SET_FREQ;
+	translate["reset"] = RESET;
+	translate["quit"] = QUIT;
 
 	// start the thread
 	if (pthread_create(&thread, NULL, watchPipe, this))
@@ -84,10 +89,43 @@ void *CommQueue::watchPipe(void *obj)
  */
 void CommQueue::processCommand(const std::string comm)
 {
-#ifdef DEBUG
-	std::cout << "[CommQueue] " << comm << std::endl;
-#endif
+	std::istringstream stream(comm);
+	std::string command;
+	stream >> command;
 
-	// parse command
-	// change appropriate variables
+	int value;
+	switch (translate.find(command)->second) {
+	case SET_MIN:
+		stream >> value;
+		Throt->temp_min = value*1000;
+#ifdef DEBUG
+		std::cout << "[CommQueue] Set minimum temperature to " << value << std::endl;
+#endif
+		break;
+	case SET_MAX:
+		stream >> value;
+		Throt->temp_max = value*1000;
+#ifdef DEBUG
+		std::cout << "[CommQueue] Set maximum temperature to " << value << std::endl;
+#endif
+		break;
+	case SET_FREQ:
+		stream >> value;
+		Throt->freq = value*1000;
+		Throt->override = true;
+		Throt->writeFreq();
+#ifdef DEBUG
+		std::cout << "[CommQueue] Set frequency to " << value << std::endl;
+#endif
+		break;
+	case RESET:
+		Throt->override = false;
+#ifdef DEBUG
+		std::cout << "[CommQueue] Reset mechanism" << std::endl;
+#endif
+		break;
+	case QUIT:
+		Throt->term = true;
+		break;
+	}
 }
