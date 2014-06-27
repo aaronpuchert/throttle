@@ -67,14 +67,14 @@ void *CommQueue::watchPipe(void *obj)
 	// open the pipe
 	std::ifstream pipe(that->comm_pipe, std::ifstream::in);
 
-	// watch for input
 	char buf[LINE_LENGTH];
+	int length;
 	do {
-		pipe.getline(buf, LINE_LENGTH);
-		that->processCommand(std::string(buf));
-	} while (buf[0] != '*');
-
-	that->Throt->term = true;
+		length = pipe.readsome(buf, LINE_LENGTH-1);
+		if (length)
+			that->processCommand(std::string(buf, length));
+		sleep(Throttle::wait);
+	} while (!that->Throt->term);
 
 	return 0;
 }
