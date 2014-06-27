@@ -97,7 +97,9 @@ void Throttle::writeFreq()
 void Throttle::run()
 {
 	while (!term) {
-		int waitsec = adjust();
+		int waitsec = wait;
+		if (!override)
+			waitsec = adjust();
 		sleep(waitsec);
 	}
 }

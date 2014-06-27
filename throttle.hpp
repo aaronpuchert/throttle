@@ -127,5 +127,5 @@ protected:
 	// STATUS & Override mechanics
 	CommQueue queue;
 	bool term;
-	// ...
+	bool override;
 };
