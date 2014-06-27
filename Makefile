@@ -52,8 +52,8 @@ uninstall:
 
 # Cleaning up
 clean:
-	-rm *.o throttle
-	-rm cpu*freq temp_input throttle-debug
+	-rm *.o throttle throttle-debug
+	-rm cpu*freq temp_input pipe
 	-rm throttle.conf throttle-debug.conf
 
 .PHONY: debug install uninstall clean
