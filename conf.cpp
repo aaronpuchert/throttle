@@ -94,6 +94,11 @@ void CommQueue::processCommand(const std::string comm)
 
 	int value;
 	switch (translate.find(command)->second) {
+	case DEFAULT:		// we land here if "command" is not found
+#ifdef DEBUG
+		std::cout << "[CommQueue] Ignored unknown command: " << command << std::endl;
+#endif
+		break;
 	case SET_MIN:
 		stream >> value;
 		Throt->temp_min = value*1000;

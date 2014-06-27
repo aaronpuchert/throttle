@@ -89,6 +89,7 @@ protected:
 
 	// commands
 	enum Command {
+		DEFAULT = 0,
 		SET_MAX,
 		SET_MIN,
 		SET_FREQ,
