@@ -5,7 +5,7 @@
  * Constructor of a Throttle object. The argument config_fn
  * should be the name of the configuration file.
  */
-Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pipe_fn), term(false)
+Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pipe_fn), term(false), override(false)
 {
 	// open the configuration file
 	Conf conf(config_fn);
