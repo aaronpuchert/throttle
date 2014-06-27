@@ -28,7 +28,7 @@ class Conf {
 public:
 	Conf(const char *config_fn);
 	template<typename T>
-		void GetAttr(const std::string &name, T *output);
+		void GetAttr(const std::string &name, T *output) const;
 
 protected:
 	// attributes
@@ -40,7 +40,7 @@ private:
 };
 
 // IMPLEMENTATION OF THE TEMPLATES
-template<typename T> void Conf::GetAttr(const std::string &name, T *output)
+template<typename T> void Conf::GetAttr(const std::string &name, T* output) const
 {
 	auto attr = attributes.find(name);
 	if (attr != attributes.end())
@@ -114,7 +114,7 @@ public:
 protected:
 	int adjust();
 	int readTemp() const;
-	void writeFreq();
+	void writeFreq() const;
 
 	// SETTINGS
 	// number of cores

@@ -76,7 +76,7 @@ int Throttle::readTemp() const
 /*
  * Write the determined frequency to the specific files.
  */
-void Throttle::writeFreq()
+void Throttle::writeFreq() const
 {
 #ifdef DEBUG
 	std::cout << "[Throttle] New frequency: " << (float)freq/1000 << " MHz" << std::endl;
