@@ -3,7 +3,7 @@
 
 /*
  * Constructor of a Throttle object. The argument config_fn
- * sould be the name of the configuration file.
+ * should be the name of the configuration file.
  */
 Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pipe_fn), term(false)
 {
@@ -92,7 +92,7 @@ void Throttle::writeFreq() const
 }
 
 /*
- * Run the throttle daemon. This function is unlikely to stop on its own.
+ * Run the throttle daemon. We stop if someone writes "quit" to the command pipe.
  */
 void Throttle::run()
 {

@@ -1,5 +1,4 @@
 #include "throttle.hpp"
-#include <stdexcept>
 #include <unistd.h>
 
 /*
@@ -44,7 +43,7 @@ Conf::Conf(const char *config_fn) {
 }
 
 /*
- * Construct a command queue. We want to now the parent, where we can write changes to,
+ * Construct a command queue. We want to know the parent, where we can write changes to,
  * and which pipe to listen on.
  */
 CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent), comm_pipe(pipe_fn)
