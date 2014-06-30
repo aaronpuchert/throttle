@@ -131,7 +131,7 @@ protected:
 
 	// dynamics
 	int wait_after_adjust;
-	static const int wait = 1;
+	static const int wait = 3;
 
 	// STATUS & Override mechanics
 	CommQueue queue;
