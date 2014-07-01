@@ -136,5 +136,5 @@ protected:
 	// STATUS & Override mechanics
 	CommQueue queue;
 	bool term;
-	bool override;
+	int override_freq;	// 0 = no override
 };

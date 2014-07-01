@@ -5,7 +5,7 @@
  * Constructor of a Throttle object. The argument config_fn
  * should be the name of the configuration file.
  */
-Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pipe_fn), term(false), override(false)
+Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pipe_fn), term(false), override_freq(0)
 {
 	// open the configuration file
 	Conf conf(config_fn);
@@ -98,7 +98,13 @@ void Throttle::run()
 {
 	while (!term) {
 		int waitsec = wait;
-		if (!override)
+		if (override_freq) {
+			if (freq != override_freq) {
+				freq = override_freq;
+				writeFreq();
+			}
+		}
+		else
 			waitsec = adjust();
 		sleep(waitsec);
 	}

@@ -115,15 +115,13 @@ void CommQueue::processCommand(const std::string comm)
 		break;
 	case SET_FREQ:
 		stream >> value;
-		Throt->freq = value*1000;
-		Throt->override = true;
-		Throt->writeFreq();
+		Throt->override_freq = value*1000;
 #ifdef DEBUG
 		std::cout << "[CommQueue] Set frequency to " << value << std::endl;
 #endif
 		break;
 	case RESET:
-		Throt->override = false;
+		Throt->override_freq = 0;
 #ifdef DEBUG
 		std::cout << "[CommQueue] Reset mechanism" << std::endl;
 #endif
