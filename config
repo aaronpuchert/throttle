@@ -1,9 +1,15 @@
 #!/bin/bash
+# Call without arguments to produce the ordinary config file, or with a number
+# of cores to produce a config file for debugging.
 echo "# Throttle configuration file"
 
 # System configuration
 echo "# System configuration"
-CORES=$(nproc)
+if [ $# -ge 1 ]; then
+	CORES=$1
+else
+	CORES=$(nproc)
+fi
 echo "cores =" $CORES
 
 # Where do we get the temperature?

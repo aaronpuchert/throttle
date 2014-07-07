@@ -11,6 +11,8 @@ DEBUG_OBJS := $(patsubst %.cpp, %-debug.o, $(CPPS))
 LIBS := pthread
 LIBOPTIONS := $(patsubst %, -l%, $(LIBS))
 
+DEBUG_CORES := 2
+
 # Compiling
 throttle: $(OBJS) throttle.conf
 	$(CXX) $(LFLAGS) -o throttle $(OBJS)
@@ -34,7 +36,7 @@ $(DEBUG_OBJS): %-debug.o: %.cpp throttle.hpp
 
 throttle-debug.conf:
 	touch throttle-debug.conf
-	./config debug >throttle-debug.conf
+	./config $(DEBUG_CORES) >throttle-debug.conf
 
 pipe:
 	mkfifo pipe
