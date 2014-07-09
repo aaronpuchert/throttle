@@ -18,7 +18,31 @@ if [ $# -ge 1 ]; then
 	touch temp_input
 	echo "60000" > temp_input
 else
-	echo "temp_file = /sys/class/hwmon/hwmon1/device/temp1_input"
+	# Try to find the temperature file
+	TEMP_FILE=null
+	for i in $(seq 0 3); do
+		for j in $(seq 0 3); do
+			file="/sys/class/hwmon/hwmon$i/device/temp${j}_input"
+			if [ -f $file ]; then
+				TEMP_FILE=$file
+				break;
+			fi
+
+			file="/sys/class/hwmon/hwmon$i/temp${j}_input"
+			if [ -f $file ]; then
+				TEMP_FILE=$file
+				break;
+			fi
+		done
+
+		file="/sys/class/thermal/thermal_zone$i/temp"
+		if [ -f $file ]; then
+			TEMP_FILE=$file
+			break;
+		fi
+	done
+
+	echo "temp_file = $TEMP_FILE"
 fi
 
 # Creating a list of availalabe frequencies
