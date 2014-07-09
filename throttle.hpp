@@ -110,7 +110,7 @@ public:
 
 	friend CommQueue;
 protected:
-	int adjust();
+	void adjust();
 	int readTemp() const;
 	void writeFreq() const;
 
@@ -132,6 +132,10 @@ protected:
 	// dynamics
 	int wait_after_adjust;
 	static const int wait = 3;
+
+	// Set to +wait_after_adjust after increasing frequency, to -wait_after_adjust after decreasing it.
+	// Then it is diminished in absolute value after each step of adjusting.
+	int stabilize;
 
 	// STATUS & Override mechanics
 	CommQueue queue;

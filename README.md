@@ -21,7 +21,7 @@ CPU frequency drivers typically regulate the core frequencies based purely on de
 
 We do not override the on-demand mechanisms, instead we modify their input. Whenever the temperature exceeds a certain threshold, we decrease the maximum CPU frequency. If the CPU cools down and reaches another threshold, we increase the maximum frequency again. Both thresholds can be set as `temp_max` and `temp_min` (in °C) via the configuration file. (see below)
 
-To efficiently regulate a system, one has to take into account the delay between changing the input and the effect on the output. Therefore, we wait at least `wait` seconds after increasing/decreasing the frequency before we check the temperature again. After that, we check every three seconds if the temperature is still in the desired interval.
+To efficiently regulate a system, one has to take into account the delay between changing the input and the effect on the output. Therefore, we wait at least `3*wait` seconds after increasing/decreasing the frequency before we increase/decrease again. After that, we check every three seconds if the temperature is still in the desired interval.
 
 Configuration
 -------------

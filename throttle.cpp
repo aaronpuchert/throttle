@@ -5,7 +5,8 @@
  * Constructor of a Throttle object. The argument config_fn
  * should be the name of the configuration file.
  */
-Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pipe_fn), term(false), override_freq(0)
+Throttle::Throttle(const char *config_fn, const char* pipe_fn)
+	: stabilize(0), queue(this, pipe_fn), term(false), override_freq(0)
 {
 	// open the configuration file
 	Conf conf(config_fn);
@@ -37,7 +38,7 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn) : queue(this, pip
  * Adjust the frequency according to the current temperature.
  * Returns the number of seconds to wait until the next adjustment.
  */
-int Throttle::adjust()
+void Throttle::adjust()
 {
 	int temp = readTemp();
 	std::set<int>::iterator new_freq = freqs.end();
@@ -46,20 +47,25 @@ int Throttle::adjust()
 	std::cout << "[Throttle] Temperature: " << (float)temp/1000 << "°C"<< std::endl;
 #endif
 
+	// slowly reset stabilize counter
+	if (stabilize > 0) --stabilize;
+	if (stabilize < 0) ++stabilize;
+
 	// If the temperature exceeds a threshold, find the next best frequency.
-	if (temp > temp_max)
+	if (temp > temp_max && stabilize >= 0) {
 		new_freq = --freqs.lower_bound(freq);
-	if (temp < temp_min)
+		stabilize = -wait_after_adjust;
+	}
+	if (temp < temp_min && stabilize <= 0) {
 		new_freq = freqs.upper_bound(freq);
+		stabilize = wait_after_adjust;
+	}
 
 	// Have we found one? Then adjust.
 	if (new_freq != freqs.end()) {
 		freq = *new_freq;
 		writeFreq();
-		return wait_after_adjust;
 	}
-	else
-		return wait;
 }
 
 /*
@@ -97,7 +103,6 @@ void Throttle::writeFreq() const
 void Throttle::run()
 {
 	while (!term) {
-		int waitsec = wait;
 		if (override_freq) {
 			if (freq != override_freq) {
 				freq = override_freq;
@@ -105,7 +110,8 @@ void Throttle::run()
 			}
 		}
 		else
-			waitsec = adjust();
-		sleep(waitsec);
+			adjust();
+
+		sleep(wait);
 	}
 }
