@@ -11,6 +11,13 @@ DEBUG_OBJS := $(patsubst %.cpp, %-debug.o, $(CPPS))
 LIBS := pthread
 LIBOPTIONS := $(patsubst %, -l%, $(LIBS))
 
+# directory for service file
+GENSYSTEMD := /lib/systemd/system
+SYSTEMD := $(shell test -d /usr$(GENSYSTEMD) && echo /usr$(GENSYSTEMD))
+ifeq ($(SYSTEMD),)
+  SYSTEMD := $(shell test -d $(GENSYSTEMD) && echo $(GENSYSTEMD))
+endif
+
 DEBUG_CORES := 2
 
 # Compiling
@@ -45,12 +52,12 @@ pipe:
 install: throttle
 	@install --verbose --strip --owner=root throttle /usr/sbin
 	@install --verbose --owner=root throttle.conf /etc
-	@install --verbose --owner=root throttle.service /usr/lib/systemd/system
+	@install --verbose --owner=root throttle.service $(SYSTEMD)
 
 uninstall:
 	rm -f /usr/sbin/throttle
 	rm -f /etc/throttle.conf
-	rm -f /usr/lib/systemd/system/throttle.service
+	rm -f $(SYSTEMD)/throttle.service
 
 # Cleaning up
 clean:
