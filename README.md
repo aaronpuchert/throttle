@@ -2,6 +2,7 @@ throttle
 ========
 
 Daemon to regulate the maximum CPU clock based on its temperature.
+[![Build Status](https://travis-ci.org/aaronpuchert/throttle.svg?branch=master)](https://travis-ci.org/aaronpuchert/throttle)
 
 Compilation & Installation
 --------------------------
