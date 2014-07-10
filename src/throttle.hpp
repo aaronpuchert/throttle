@@ -3,6 +3,7 @@
 #include <queue>
 #include <fstream>
 #include <exception>
+#include <stdexcept>
 #include <sstream>
 #include <pthread.h>
 
