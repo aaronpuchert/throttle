@@ -4,7 +4,8 @@ CXXFLAGS = -Wall -std=c++11 -O3
 LFLAGS = -Wall $(LIBOPTIONS)
 
 # Files and libraries
-CPPS := main.cpp throttle.cpp conf.cpp
+SOURCES := main.cpp throttle.cpp conf.cpp
+CPPS := $(patsubst %,src/%,$(SOURCES))
 OBJS := $(patsubst %.cpp, %.o, $(CPPS))
 DEBUG_OBJS := $(patsubst %.cpp, %-debug.o, $(CPPS))
 
@@ -24,7 +25,7 @@ DEBUG_CORES := 2
 throttle: $(OBJS) throttle.conf
 	$(CXX) $(LFLAGS) -o throttle $(OBJS)
 
-$(OBJS): %.o: %.cpp throttle.hpp
+$(OBJS): %.o: %.cpp src/throttle.hpp
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
 # Configuration
@@ -33,20 +34,21 @@ throttle.conf:
 	./config >throttle.conf
 
 # Debug
-debug: throttle-debug throttle-debug.conf pipe
+debug: debug/throttle debug/throttle.conf debug/pipe
 
-throttle-debug: $(DEBUG_OBJS)
-	$(CXX) -g $(LFLAGS) -o throttle-debug $(DEBUG_OBJS)
+debug/throttle: $(DEBUG_OBJS)
+	-mkdir debug
+	$(CXX) -g $(LFLAGS) -o $@ $(DEBUG_OBJS)
 
-$(DEBUG_OBJS): %-debug.o: %.cpp throttle.hpp
+$(DEBUG_OBJS): %-debug.o: %.cpp src/throttle.hpp
 	$(CXX) -c -g -DDEBUG $(CXXFLAGS) -o $@ $<
 
-throttle-debug.conf:
-	touch throttle-debug.conf
-	./config $(DEBUG_CORES) >throttle-debug.conf
+debug/throttle.conf:
+	touch debug/throttle.conf
+	(cd debug; ../config $(DEBUG_CORES) >throttle.conf)
 
-pipe:
-	mkfifo pipe
+debug/pipe:
+	mkfifo debug/pipe
 
 # Installation
 install: throttle
@@ -61,8 +63,8 @@ uninstall:
 
 # Cleaning up
 clean:
-	-rm *.o throttle throttle-debug
-	-rm cpu*freq temp_input pipe
-	-rm throttle.conf throttle-debug.conf
+	-rm src/*.o throttle debug/throttle
+	-rm debug/cpu*freq debug/temp_input debug/pipe
+	-rm throttle.conf debug/throttle.conf
 
 .PHONY: debug install uninstall clean
