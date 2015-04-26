@@ -53,8 +53,8 @@ debug/pipe:
 # Installation
 install: throttle
 	@install --verbose --strip --owner=root throttle /usr/sbin
-	@install --verbose --owner=root throttle.conf /etc
-	@install --verbose --owner=root throttle.service $(SYSTEMD)
+	@install --verbose --mode=644 --owner=root throttle.conf /etc
+	@install --verbose --mode=644 --owner=root throttle.service $(SYSTEMD)
 
 uninstall:
 	rm -f /usr/sbin/throttle
