@@ -8,7 +8,7 @@ Compilation & Installation
 --------------------------
 After cloning the repository and `cd`ing into the main directory, execute `make` to compile. If you want a debug version, run `make debug` instead. The debug version reads the temperature from  a local file `./temp_input` and writes the frequencies to `./cpu#freq`, where `#` runs through the cores.
 
-You can also install the throttle daemon as a system service. At the moment, this is only tested to work on SuSE Linux. Just execute `sudo make install`. You might want to adjust the settings in `throttle.conf` before. (see below) Uninstalling works similarly by `sudo make uninstall`.
+You can also install the throttle daemon as `systemd` service. Just execute `sudo make install`. You might want to adjust the settings in `throttle.conf` before. (see below) Uninstalling works similarly by `sudo make uninstall`.
 
 The program can also be called directly via
 
