@@ -21,16 +21,9 @@ int main(int argc, char **argv)
 {
 	const char *config_fn, *pipe_fn;
 
-	// read arguments from command line
-	if (argc > 1)
-		config_fn = argv[1];
-	else
-		config_fn = "throttle.conf";
-
-	if (argc > 2)
-		pipe_fn = argv[2];
-	else
-		pipe_fn = "pipe";
+	// Read arguments from command line, or take the defaults
+	config_fn = (argc > 1) ? argv[1] : "throttle.conf";
+	pipe_fn = (argc > 2) ? argv[2] : "pipe";
 
 	// Install signal handler
 	struct sigaction sa;
