@@ -17,6 +17,8 @@ template<> void Conf::parse<std::string>(const std::string &str, std::string *re
 Conf::Conf(const char *config_fn) {
 	// open the file
 	std::ifstream conf_file(config_fn);
+	if (!conf_file)
+		throw std::runtime_error(std::string("Couldn't open config file '") + config_fn + '\'');
 
 	// read every line and put it in the map
 	char line[LINE_LENGTH];
@@ -57,7 +59,8 @@ CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent)
 	translate["quit"] = QUIT;
 
 	// Open the command pipe
-	comm_file = open(pipe_fn, O_NONBLOCK);
+	if ((comm_file = open(pipe_fn, O_NONBLOCK)) < 0)
+		throw std::runtime_error(std::string("Couldn't open command pipe '") + pipe_fn + '\'');
 }
 
 CommQueue::~CommQueue()

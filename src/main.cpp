@@ -1,4 +1,5 @@
 #include "throttle.hpp"
+#include <iostream>
 
 /*
  * Main function.
@@ -17,9 +18,17 @@ int main(int argc, char **argv)
 	else
 		pipe_fn = "pipe";
 
-	// create Throttle object
-	Throttle throttle(config_fn, pipe_fn);
+	try {
+		// create Throttle object
+		Throttle throttle(config_fn, pipe_fn);
 
-	// run
-	throttle.run();
+		// run
+		throttle.run();
+	}
+	catch (std::runtime_error ex) {
+		std::cerr << "Error: " <<  ex.what() << std::endl;
+		return 1;
+	}
+
+	return 0;
 }
