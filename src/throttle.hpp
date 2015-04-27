@@ -91,8 +91,7 @@ protected:
 		SET_MAX,
 		SET_MIN,
 		SET_FREQ,
-		RESET,
-		QUIT
+		RESET
 	};
 
 	std::map<std::string, Command> translate;

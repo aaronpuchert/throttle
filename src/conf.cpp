@@ -56,7 +56,6 @@ CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent)
 	translate["min"] = SET_MIN;
 	translate["freq"] = SET_FREQ;
 	translate["reset"] = RESET;
-	translate["quit"] = QUIT;
 
 	// Open the command pipe
 	if ((comm_file = open(pipe_fn, O_NONBLOCK)) < 0)
@@ -128,9 +127,6 @@ void CommQueue::processCommand(const std::string &comm)
 #ifdef DEBUG
 		std::cout << "[CommQueue] Reset mechanism" << std::endl;
 #endif
-		break;
-	case QUIT:
-		Throt->term = true;
 		break;
 	}
 }
