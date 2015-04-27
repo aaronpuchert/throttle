@@ -5,7 +5,6 @@
 #include <exception>
 #include <stdexcept>
 #include <sstream>
-#include <pthread.h>
 
 #ifdef DEBUG
 #include <iostream>
@@ -73,20 +72,18 @@ template<typename T> void Conf::parse(const std::string &str, std::set<T> *ret)
 class CommQueue {
 public:
 	CommQueue(Throttle *parent, const char *pipe_fn);
+	~CommQueue();
+	void update();
 
 protected:
 	// where we write to
 	Throttle *Throt;
 
-	// thread handle and main function
-	pthread_t thread;
-	static void *watchPipe(void *);
-
 	// look for input and process
 	void processCommand(const std::string &comm);
 
-	// command pipe file name
-	std::string comm_pipe;
+	// command pipe file descriptor
+	int comm_file;
 
 	// commands
 	enum Command {

@@ -1,5 +1,6 @@
 #include "throttle.hpp"
 #include <unistd.h>
+#include <fcntl.h>
 
 /*
  * Parsing function: for strings we can do better
@@ -46,7 +47,7 @@ Conf::Conf(const char *config_fn) {
  * Construct a command queue. We want to know the parent, where we can write changes to,
  * and which pipe to listen on.
  */
-CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent), comm_pipe(pipe_fn)
+CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent)
 {
 	// init translation table
 	translate["max"] = SET_MAX;
@@ -55,32 +56,31 @@ CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent), com
 	translate["reset"] = RESET;
 	translate["quit"] = QUIT;
 
-	// start the thread
-	if (pthread_create(&thread, NULL, watchPipe, this))
-		throw std::runtime_error("Could not create thread.");
+	// Open the command pipe
+	comm_file = open(pipe_fn, O_NONBLOCK);
+}
+
+CommQueue::~CommQueue()
+{
+	close(comm_file);
 }
 
 /*
- * Thread main function: `void *obj` should point to the generating object.
- * We watch the pipe for input.
+ * Look for updates from the command pipe and process them.
  */
-void *CommQueue::watchPipe(void *obj)
+void CommQueue::update()
 {
-	CommQueue *that = (CommQueue *)obj;
-
-	// open the pipe
-	std::ifstream pipe(that->comm_pipe, std::ifstream::in);
-
 	char buf[LINE_LENGTH];
-	int length;
+	ssize_t ret;
 	do {
-		length = pipe.readsome(buf, LINE_LENGTH-1);
-		if (length)
-			that->processCommand(std::string(buf, length));
-		sleep(Throttle::wait);
-	} while (!that->Throt->term);
+		ret = read(comm_file, buf, LINE_LENGTH-1);
+		if (ret > 0)
+			processCommand(std::string(buf, ret));
+	} while (ret > 0);
 
-	return 0;
+	// This should be because there's nothing more to read
+	if (ret != 0 && errno != EAGAIN)
+		throw std::runtime_error("Read error while checking command pipe");
 }
 
 /*

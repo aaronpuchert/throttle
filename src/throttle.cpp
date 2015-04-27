@@ -103,6 +103,9 @@ void Throttle::writeFreq() const
 void Throttle::run()
 {
 	while (!term) {
+		// Look if there is new input in the pipe
+		queue.update();
+
 		if (override_freq) {
 			if (freq != override_freq) {
 				freq = override_freq;
@@ -122,8 +125,7 @@ void Throttle::run()
 void Throttle::setOverrideFreq(int freq)
 {
 	override_freq = freq*1000;
-	if (freq != 0)
-		stabilize = 0;
+	stabilize = 0;
 }
 
 /*

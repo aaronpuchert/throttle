@@ -9,7 +9,7 @@ CPPS := $(patsubst %,src/%,$(SOURCES))
 OBJS := $(patsubst %.cpp, %.o, $(CPPS))
 DEBUG_OBJS := $(patsubst %.cpp, %-debug.o, $(CPPS))
 
-LIBS := pthread
+LIBS :=
 LIBOPTIONS := $(patsubst %, -l%, $(LIBS))
 
 # directory for service file
