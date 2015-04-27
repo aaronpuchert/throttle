@@ -6,7 +6,7 @@
  * should be the name of the configuration file.
  */
 Throttle::Throttle(const char *config_fn, const char* pipe_fn)
-	: stabilize(0), queue(this, pipe_fn), term(false), override_freq(0)
+	: term(false), stabilize(0), queue(this, pipe_fn), override_freq(0)
 {
 	// open the configuration file
 	Conf conf(config_fn);
@@ -114,4 +114,30 @@ void Throttle::run()
 
 		sleep(wait);
 	}
+}
+
+/*
+ * Set new override frequency in MHz or reset. (with freq=0)
+ */
+void Throttle::setOverrideFreq(int freq)
+{
+	override_freq = freq*1000;
+	if (freq != 0)
+		stabilize = 0;
+}
+
+/*
+ * Set minimum temperature in degrees Celsius.
+ */
+void Throttle::setMinTemp(int temp)
+{
+	temp_min = temp*1000;
+}
+
+/*
+ * Set maximum temperature in degrees Celsius.
+ */
+void Throttle::setMaxTemp(int temp)
+{
+	temp_max = temp*1000;
 }

@@ -86,7 +86,7 @@ void *CommQueue::watchPipe(void *obj)
 /*
  * Process a command coming through the pipe.
  */
-void CommQueue::processCommand(const std::string comm)
+void CommQueue::processCommand(const std::string &comm)
 {
 	std::istringstream stream(comm);
 	std::string command;
@@ -101,28 +101,27 @@ void CommQueue::processCommand(const std::string comm)
 		break;
 	case SET_MIN:
 		stream >> value;
-		Throt->temp_min = value*1000;
+		Throt->setMinTemp(value);
 #ifdef DEBUG
 		std::cout << "[CommQueue] Set minimum temperature to " << value << std::endl;
 #endif
 		break;
 	case SET_MAX:
 		stream >> value;
-		Throt->temp_max = value*1000;
+		Throt->setMaxTemp(value);
 #ifdef DEBUG
 		std::cout << "[CommQueue] Set maximum temperature to " << value << std::endl;
 #endif
 		break;
 	case SET_FREQ:
 		stream >> value;
-		Throt->override_freq = value*1000;
-		Throt->stabilize = 0;
+		Throt->setOverrideFreq(value);
 #ifdef DEBUG
 		std::cout << "[CommQueue] Set frequency to " << value << std::endl;
 #endif
 		break;
 	case RESET:
-		Throt->override_freq = 0;
+		Throt->setOverrideFreq(0);
 #ifdef DEBUG
 		std::cout << "[CommQueue] Reset mechanism" << std::endl;
 #endif

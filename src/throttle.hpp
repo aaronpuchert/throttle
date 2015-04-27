@@ -83,7 +83,7 @@ protected:
 	static void *watchPipe(void *);
 
 	// look for input and process
-	void processCommand(const std::string comm);
+	void processCommand(const std::string &comm);
 
 	// command pipe file name
 	std::string comm_pipe;
@@ -109,7 +109,12 @@ public:
 	Throttle(const char *config_fn, const char* pipe_fn);
 	void run();
 
-	friend CommQueue;
+	// Interface for the command queue
+	void setOverrideFreq(int freq);
+	void setMinTemp(int temp);
+	void setMaxTemp(int temp);
+
+	bool term;
 protected:
 	void adjust();
 	int readTemp() const;
@@ -140,6 +145,5 @@ protected:
 
 	// STATUS & Override mechanics
 	CommQueue queue;
-	bool term;
 	int override_freq;	// 0 = no override
 };
