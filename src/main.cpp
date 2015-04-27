@@ -1,11 +1,5 @@
 #include "throttle.hpp"
 
-#ifndef DEBUG
-#define THROTTLE_CONF "throttle.conf"
-#else
-#define THROTTLE_CONF "throttle-debug.conf"
-#endif
-
 /*
  * Main function.
  */
@@ -17,7 +11,7 @@ int main(int argc, char **argv)
 	if (argc > 1)
 		config_fn = argv[1];
 	else
-		config_fn = THROTTLE_CONF;
+		config_fn = "throttle.conf";
 	if (argc > 2)
 		pipe_fn = argv[2];
 	else
