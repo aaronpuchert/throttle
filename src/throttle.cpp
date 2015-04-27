@@ -29,9 +29,7 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn)
 	std::ifstream freq_file(freq_fn_prefix + "0" + freq_fn_suffix);
 	freq_file >> freq;
 
-#ifdef DEBUG
-	std::cout << "[Throttle] Initial frequency: " << (float)freq/1000 << " MHz" << std::endl;
-#endif
+	DEBUG_PRINT("[Throttle] Initial frequency: " << (float)freq/1000 << " MHz");
 }
 
 /*
@@ -43,9 +41,7 @@ void Throttle::adjust()
 	int temp = readTemp();
 	std::set<int>::iterator new_freq = freqs.end();
 
-#ifdef DEBUG
-	std::cout << "[Throttle] Temperature: " << (float)temp/1000 << "°C"<< std::endl;
-#endif
+	DEBUG_PRINT("[Throttle] Temperature: " << (float)temp/1000 << "°C");
 
 	// slowly reset stabilize counter
 	if (stabilize > 0) --stabilize;
@@ -84,9 +80,7 @@ int Throttle::readTemp() const
  */
 void Throttle::writeFreq() const
 {
-#ifdef DEBUG
-	std::cout << "[Throttle] New frequency: " << (float)freq/1000 << " MHz" << std::endl;
-#endif
+	DEBUG_PRINT("[Throttle] New frequency: " << (float)freq/1000 << " MHz");
 	std::string freq_fn = freq_fn_prefix + '#' + freq_fn_suffix;
 
 	// loop over the files, write the frequency in each

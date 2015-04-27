@@ -36,9 +36,7 @@ Conf::Conf(const char *config_fn) {
 		conf_file.ignore(LINE_LENGTH, ' ');
 		conf_file.getline(line, LINE_LENGTH);
 
-#ifdef DEBUG
-		std::cout << "[Conf] " << name << " = " << line << std::endl;
-#endif
+		DEBUG_PRINT("[Conf] " << name << " = " << line);
 
 		// write into map
 		attributes[name] = std::string(line);
@@ -97,36 +95,26 @@ void CommQueue::processCommand(const std::string &comm)
 	int value;
 	switch (translate.find(command)->second) {
 	case DEFAULT:		// we land here if "command" is not found
-#ifdef DEBUG
-		std::cout << "[CommQueue] Ignored unknown command: " << command << std::endl;
-#endif
+		DEBUG_PRINT("[CommQueue] Ignored unknown command: " << command);
 		break;
 	case SET_MIN:
 		stream >> value;
 		Throt->setMinTemp(value);
-#ifdef DEBUG
-		std::cout << "[CommQueue] Set minimum temperature to " << value << std::endl;
-#endif
+		DEBUG_PRINT("[CommQueue] Set minimum temperature to " << value);
 		break;
 	case SET_MAX:
 		stream >> value;
 		Throt->setMaxTemp(value);
-#ifdef DEBUG
-		std::cout << "[CommQueue] Set maximum temperature to " << value << std::endl;
-#endif
+		DEBUG_PRINT("[CommQueue] Set maximum temperature to " << value);
 		break;
 	case SET_FREQ:
 		stream >> value;
 		Throt->setOverrideFreq(value);
-#ifdef DEBUG
-		std::cout << "[CommQueue] Set frequency to " << value << std::endl;
-#endif
+		DEBUG_PRINT("[CommQueue] Set frequency to " << value);
 		break;
 	case RESET:
 		Throt->setOverrideFreq(0);
-#ifdef DEBUG
-		std::cout << "[CommQueue] Reset mechanism" << std::endl;
-#endif
+		DEBUG_PRINT("[CommQueue] Reset mechanism");
 		break;
 	}
 }

@@ -8,6 +8,9 @@
 
 #ifdef DEBUG
 #include <iostream>
+#define DEBUG_PRINT(...) std::cout << __VA_ARGS__ << std::endl
+#else
+#define DEBUG_PRINT(...)
 #endif
 
 // Maximum config file line length

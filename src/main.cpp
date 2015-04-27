@@ -63,9 +63,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-#ifdef DEBUG
-	std::cout << "[Main] Successful shutdown" << std::endl;
-#endif
+	DEBUG_PRINT("[Main] Successful shutdown");
 
 	return 0;
 }
