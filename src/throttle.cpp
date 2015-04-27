@@ -1,7 +1,7 @@
 #include "throttle.hpp"
 #include <unistd.h>
 
-/*
+/**
  * Constructor of a Throttle object. The argument config_fn
  * should be the name of the configuration file.
  */
@@ -32,7 +32,7 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn)
 	DEBUG_PRINT("[Throttle] Initial frequency: " << (float)freq/1000 << " MHz");
 }
 
-/*
+/**
  * Adjust the frequency according to the current temperature.
  * Returns the number of seconds to wait until the next adjustment.
  */
@@ -64,7 +64,7 @@ void Throttle::adjust()
 	}
 }
 
-/*
+/**
  * Read and return the current CPU temperature.
  */
 int Throttle::readTemp() const
@@ -75,7 +75,7 @@ int Throttle::readTemp() const
 	return temp;
 }
 
-/*
+/**
  * Write the determined frequency to the specific files.
  */
 void Throttle::writeFreq() const
@@ -91,8 +91,11 @@ void Throttle::writeFreq() const
 	}
 }
 
-/*
- * Run the throttle daemon. We stop if someone writes "quit" to the command pipe.
+/**
+ * Run the throttle daemon.
+ *
+ * We stop if someone sets the termination flag, which should be done by a
+ * signal handler.
  */
 void Throttle::run()
 {
@@ -113,8 +116,8 @@ void Throttle::run()
 	}
 }
 
-/*
- * Set new override frequency in MHz or reset. (with freq=0)
+/**
+ * Set new override frequency in MHz or reset (with freq=0).
  */
 void Throttle::setOverrideFreq(int freq)
 {
@@ -122,7 +125,7 @@ void Throttle::setOverrideFreq(int freq)
 	stabilize = 0;
 }
 
-/*
+/**
  * Set minimum temperature in degrees Celsius.
  */
 void Throttle::setMinTemp(int temp)
@@ -130,7 +133,7 @@ void Throttle::setMinTemp(int temp)
 	temp_min = temp*1000;
 }
 
-/*
+/**
  * Set maximum temperature in degrees Celsius.
  */
 void Throttle::setMaxTemp(int temp)

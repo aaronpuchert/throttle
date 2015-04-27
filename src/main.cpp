@@ -5,7 +5,7 @@
 // Pointer to throttle instance for signal handler.
 Throttle *throt = NULL;
 
-/*
+/**
  * Handle termination signals.
  */
 void sighandle(int sig)
@@ -14,7 +14,7 @@ void sighandle(int sig)
 		throt->term = true;
 }
 
-/*
+/**
  * Main function.
  */
 int main(int argc, char **argv)

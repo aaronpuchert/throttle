@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-/*
+/**
  * Parsing function: for strings we can do better
  */
 template<> void Conf::parse<std::string>(const std::string &str, std::string *ret)
@@ -10,9 +10,11 @@ template<> void Conf::parse<std::string>(const std::string &str, std::string *re
 	*ret = str;
 }
 
-/*
- * Configuration reader.
- * This function is guaranteed to read in all syntactically correct files, but might also accept others.
+/**
+ * Read a configuration file.
+ *
+ * This function is guaranteed to read in all syntactically correct files, but
+ * might also accept others.
  */
 Conf::Conf(const char *config_fn) {
 	// open the file
@@ -43,8 +45,10 @@ Conf::Conf(const char *config_fn) {
 	}
 }
 
-/*
- * Construct a command queue. We want to know the parent, where we can write changes to,
+/**
+ * Construct a command queue.
+ *
+ * We want to know the parent, where we can write changes to,
  * and which pipe to listen on.
  */
 CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent)
@@ -60,12 +64,17 @@ CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent)
 		throw std::runtime_error(std::string("Couldn't open command pipe '") + pipe_fn + '\'');
 }
 
+/**
+ * Destruct the command queue.
+ *
+ * We have to close the file manually here.
+ */
 CommQueue::~CommQueue()
 {
 	close(comm_file);
 }
 
-/*
+/**
  * Look for updates from the command pipe and process them.
  */
 void CommQueue::update()
@@ -83,7 +92,7 @@ void CommQueue::update()
 		throw std::runtime_error("Read error while checking command pipe");
 }
 
-/*
+/**
  * Process a command coming through the pipe.
  */
 void CommQueue::processCommand(const std::string &comm)
