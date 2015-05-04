@@ -64,7 +64,7 @@ const std::map<std::string, CommQueue::Command> CommQueue::translate = {
 CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent)
 {
 	// Open the command pipe
-	if ((comm_file = open(pipe_fn, O_NONBLOCK)) < 0)
+	if ((comm_file = open(pipe_fn, O_RDONLY | O_NONBLOCK)) < 0)
 		throw std::runtime_error(std::string("Couldn't open command pipe '") + pipe_fn + '\'');
 }
 
