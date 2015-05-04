@@ -46,6 +46,16 @@ Conf::Conf(const char *config_fn) {
 }
 
 /**
+ * Translation table for a command queue.
+ */
+const std::map<std::string, CommQueue::Command> CommQueue::translate = {
+	{"max", CommQueue::SET_MAX},
+	{"min", CommQueue::SET_MIN},
+	{"freq", CommQueue::SET_FREQ},
+	{"reset", CommQueue::RESET}
+};
+
+/**
  * Construct a command queue.
  *
  * We want to know the parent, where we can write changes to,
@@ -53,12 +63,6 @@ Conf::Conf(const char *config_fn) {
  */
 CommQueue::CommQueue(Throttle *parent, const char *pipe_fn) : Throt(parent)
 {
-	// init translation table
-	translate["max"] = SET_MAX;
-	translate["min"] = SET_MIN;
-	translate["freq"] = SET_FREQ;
-	translate["reset"] = RESET;
-
 	// Open the command pipe
 	if ((comm_file = open(pipe_fn, O_NONBLOCK)) < 0)
 		throw std::runtime_error(std::string("Couldn't open command pipe '") + pipe_fn + '\'');

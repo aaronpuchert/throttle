@@ -97,7 +97,7 @@ protected:
 		RESET
 	};
 
-	std::map<std::string, Command> translate;
+	static const std::map<std::string, Command> translate;
 };
 
 //---------------------------------------
