@@ -1,12 +1,11 @@
 #include "throttle.hpp"
-#include <unistd.h>
 
 /**
  * Constructor of a Throttle object. The argument config_fn
  * should be the name of the configuration file.
  */
 Throttle::Throttle(const char *config_fn, const char* pipe_fn)
-	: term(false), stabilize(0), queue(this, pipe_fn), override_freq(0)
+	: stabilize(0), queue(this, pipe_fn), override_freq(0)
 {
 	// open the configuration file
 	Conf conf(config_fn);
@@ -30,6 +29,26 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn)
 	freq_file >> freq;
 
 	DEBUG_PRINT("[Throttle] Initial frequency: " << (float)freq/1000 << " MHz");
+}
+
+/**
+ * Execute one feedback cycle.
+ *
+ * Reads the current temperature and adapts the maximum frequency, if necessary.
+ */
+void Throttle::operator()()
+{
+	// Look if there is new input in the pipe
+	queue.update();
+
+	if (override_freq) {
+		if (freq != override_freq) {
+			freq = override_freq;
+			writeFreq();
+		}
+	}
+	else
+		adjust();
 }
 
 /**
@@ -88,30 +107,5 @@ void Throttle::writeFreq() const
 		freq_fn[freq_fn_prefix.length()] = '0' + core;
 		std::ofstream freq_file(freq_fn);
 		freq_file << freq;
-	}
-}
-
-/**
- * Run the throttle daemon.
- *
- * We stop if someone sets the termination flag, which should be done by a
- * signal handler.
- */
-void Throttle::run()
-{
-	while (!term) {
-		// Look if there is new input in the pipe
-		queue.update();
-
-		if (override_freq) {
-			if (freq != override_freq) {
-				freq = override_freq;
-				writeFreq();
-			}
-		}
-		else
-			adjust();
-
-		sleep(wait);
 	}
 }

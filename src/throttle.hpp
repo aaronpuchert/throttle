@@ -105,7 +105,7 @@ private:
 class Throttle {
 public:
 	Throttle(const char *config_fn, const char* pipe_fn);
-	void run();
+	void operator()();
 
 	/**
 	 * Set new override frequency in MHz or reset (with freq=0).
@@ -125,8 +125,6 @@ public:
 	 * Set maximum temperature in degrees Celsius.
 	 */
 	void setMaxTemp(int temp) { temp_max = temp*1000; }
-
-	bool term;
 
 private:
 	void adjust();
@@ -150,7 +148,6 @@ private:
 
 	// dynamics
 	int wait_after_adjust;
-	static const int wait = 3;
 
 	// Set to +wait_after_adjust after increasing frequency, to -wait_after_adjust after decreasing it.
 	// Then it is diminished in absolute value after each step of adjusting.

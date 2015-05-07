@@ -1,17 +1,18 @@
 #include "throttle.hpp"
 #include <iostream>
+#include <unistd.h>
 #include <signal.h>
 
-// Pointer to throttle instance for signal handler.
-Throttle *throt = NULL;
+// How many seconds shall we wait between updates?
+static const int wait = 3;
 
 /**
  * Handle termination signals.
  */
+bool term = false;
 void sighandle(int sig)
 {
-	if (throt)
-		throt->term = true;
+	term = true;
 }
 
 /**
@@ -32,8 +33,8 @@ int main(int argc, char **argv)
 	sa.sa_flags = SA_RESTART;
 
 	if (sigaction(SIGINT, &sa, NULL) < 0 ||
-		sigaction(SIGQUIT, &sa, NULL) < 0 ||
-		sigaction(SIGTERM, &sa, NULL) < 0) {
+	    sigaction(SIGQUIT, &sa, NULL) < 0 ||
+	    sigaction(SIGTERM, &sa, NULL) < 0) {
 		std::cerr << "Error: Couldn't register signal handlers" << std::endl;
 		return -1;
 	}
@@ -42,14 +43,11 @@ int main(int argc, char **argv)
 		// create Throttle object
 		Throttle throttle(config_fn, pipe_fn);
 
-		// Put in global variable for signal handler
-		throt = &throttle;
-
-		// run
-		throttle.run();
-
-		// Reset global variable
-		throt = NULL;
+		// Run the feedback loop
+		while (!term) {
+			throttle();
+			sleep(wait);
+		}
 	}
 	catch (std::runtime_error ex) {
 		std::cerr << "Error: " <<  ex.what() << std::endl;
