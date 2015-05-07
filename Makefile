@@ -1,5 +1,9 @@
-# Settings
-CXX ?= clang++
+# Installation settings, max be overwritten
+PREFIX ?= /usr
+CONFIG_DIR ?= /etc
+COMMAND_PIPE ?= /var/run/throttle
+
+# Compiler and linker flags
 CXXFLAGS = -Wall -std=c++11 -O3
 LFLAGS = -Wall $(LIBOPTIONS)
 
@@ -30,7 +34,6 @@ $(OBJS): %.o: %.cpp src/throttle.hpp
 
 # Configuration
 throttle.conf:
-	touch throttle.conf
 	./config >throttle.conf
 
 # Debug
@@ -44,7 +47,6 @@ $(DEBUG_OBJS): %-debug.o: %.cpp src/throttle.hpp
 	$(CXX) -c -g -DDEBUG $(CXXFLAGS) -o $@ $<
 
 debug/throttle.conf:
-	touch debug/throttle.conf
 	(cd debug; ../config $(DEBUG_CORES) >throttle.conf)
 
 debug/pipe:
@@ -52,13 +54,14 @@ debug/pipe:
 
 # Installation
 install: throttle
-	@install --verbose --strip --owner=root throttle /usr/sbin
-	@install --verbose --mode=644 --owner=root throttle.conf /etc
-	@install --verbose --mode=644 --owner=root throttle.service $(SYSTEMD)
+	@install --verbose --strip --owner=root throttle $(PREFIX)/sbin
+	@install --verbose --mode=644 --owner=root throttle.conf $(CONFIG_DIR)
+	@sed "{s|PREFIX|$(PREFIX)|g; s|CONFIG_FILE|$(CONFIG_DIR)/throttle.conf|g; s|PIPE|$(COMMAND_PIPE)|g}" \
+	    throttle.service >$(SYSTEMD)/throttle.service
 
 uninstall:
-	rm -f /usr/sbin/throttle
-	rm -f /etc/throttle.conf
+	rm -f $(PREFIX)/sbin/throttle
+	rm -f $(CONFIG_DIR)/throttle.conf
 	rm -f $(SYSTEMD)/throttle.service
 
 # Cleaning up

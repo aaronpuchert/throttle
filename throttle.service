@@ -2,11 +2,11 @@
 Description=Temperature-based CPU throttling
 
 [Service]
-ExecStartPre=/usr/bin/mkfifo /var/run/throttle
-ExecStartPre=/usr/bin/chown root:users /var/run/throttle
-ExecStartPre=/usr/bin/chmod 660 /var/run/throttle
-ExecStart=/usr/sbin/throttle /etc/throttle.conf /var/run/throttle
-ExecStopPost=/usr/bin/rm -f /var/run/throttle
+ExecStartPre=/usr/bin/mkfifo PIPE
+ExecStartPre=/usr/bin/chown root:users PIPE
+ExecStartPre=/usr/bin/chmod 660 PIPE
+ExecStart=PREFIX/sbin/throttle CONFIG_FILE PIPE
+ExecStopPost=/usr/bin/rm -f PIPE
 
 [Install]
 WantedBy=multi-user.target
