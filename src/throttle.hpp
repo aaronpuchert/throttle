@@ -56,7 +56,10 @@ template<typename T> void Conf::parse(const std::string &str, T *ret)
 }
 
 // ... but we might want to specialize
-template<> void Conf::parse<std::string>(const std::string &str, std::string *ret);
+template<> inline void Conf::parse<std::string>(const std::string &str, std::string *ret)
+{
+	*ret = str;
+}
 
 // For sets we do something completely different
 template<typename T> void Conf::parse(const std::string &str, std::set<T> *ret)

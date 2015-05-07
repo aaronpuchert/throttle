@@ -3,14 +3,6 @@
 #include <fcntl.h>
 
 /**
- * Parsing function: for strings we can do better
- */
-template<> void Conf::parse<std::string>(const std::string &str, std::string *ret)
-{
-	*ret = str;
-}
-
-/**
  * Read a configuration file.
  *
  * This function is guaranteed to read in all syntactically correct files, but
