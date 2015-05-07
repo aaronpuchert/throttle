@@ -30,13 +30,12 @@ public:
 	template<typename T>
 		void GetAttr(const std::string &name, T *output) const;
 
-protected:
-	// attributes
-	std::map<std::string, std::string> attributes;
-
 private:
 	template<typename T> static void parse(const std::string &str, T *ret);
 	template<typename T> static void parse(const std::string &str, std::set<T> *ret);
+
+	// attributes
+	std::map<std::string, std::string> attributes;
 };
 
 // IMPLEMENTATION OF THE TEMPLATES
@@ -78,7 +77,7 @@ public:
 	~CommQueue();
 	void update();
 
-protected:
+private:
 	// where we write to
 	Throttle *Throt;
 
@@ -114,7 +113,8 @@ public:
 	void setMaxTemp(int temp);
 
 	bool term;
-protected:
+
+private:
 	void adjust();
 	int readTemp() const;
 	void writeFreq() const;
