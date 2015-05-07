@@ -115,28 +115,3 @@ void Throttle::run()
 		sleep(wait);
 	}
 }
-
-/**
- * Set new override frequency in MHz or reset (with freq=0).
- */
-void Throttle::setOverrideFreq(int freq)
-{
-	override_freq = freq*1000;
-	stabilize = 0;
-}
-
-/**
- * Set minimum temperature in degrees Celsius.
- */
-void Throttle::setMinTemp(int temp)
-{
-	temp_min = temp*1000;
-}
-
-/**
- * Set maximum temperature in degrees Celsius.
- */
-void Throttle::setMaxTemp(int temp)
-{
-	temp_max = temp*1000;
-}

@@ -107,10 +107,24 @@ public:
 	Throttle(const char *config_fn, const char* pipe_fn);
 	void run();
 
-	// Interface for the command queue
-	void setOverrideFreq(int freq);
-	void setMinTemp(int temp);
-	void setMaxTemp(int temp);
+	/**
+	 * Set new override frequency in MHz or reset (with freq=0).
+	 */
+	void setOverrideFreq(int freq)
+	{
+		override_freq = freq*1000;
+		stabilize = 0;
+	}
+
+	/**
+	 * Set minimum temperature in degrees Celsius.
+	 */
+	void setMinTemp(int temp) { temp_min = temp*1000; }
+
+	/**
+	 * Set maximum temperature in degrees Celsius.
+	 */
+	void setMaxTemp(int temp) { temp_max = temp*1000; }
 
 	bool term;
 
