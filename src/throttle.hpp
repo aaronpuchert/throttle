@@ -1,3 +1,6 @@
+#ifndef THROTTLE_HPP
+#define THROTTLE_HPP
+
 #include <set>
 #include <map>
 #include <queue>
@@ -160,3 +163,5 @@ private:
 	CommQueue queue;
 	int override_freq;	// 0 = no override
 };
+
+#endif
