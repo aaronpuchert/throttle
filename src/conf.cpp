@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -26,12 +27,12 @@ Conf::Conf(const char *config_fn) {
 	while (conf_file >> name) {
 		// if line starts with '#', ignore it
 		if (name[0] == '#') {
-			conf_file.ignore(LINE_LENGTH, '\n');
+			conf_file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			continue;
 		}
 
-		conf_file.ignore(LINE_LENGTH, '=');
-		conf_file.ignore(LINE_LENGTH, ' ');
+		conf_file.ignore(std::numeric_limits<std::streamsize>::max(), '=');
+		conf_file.ignore(std::numeric_limits<std::streamsize>::max(), ' ');
 		conf_file.getline(line, LINE_LENGTH);
 
 		DEBUG_PRINT("[Conf] " << name << " = " << line);
