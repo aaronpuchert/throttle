@@ -104,7 +104,7 @@ void Throttle::writeFreq() const
 
 	// loop over the files, write the frequency in each
 	for (int core=0; core<cores; ++core) {
-		freq_fn[freq_fn_prefix.length()] = '0' + core;
+		freq_fn[freq_fn_prefix.length()] = '0' + char(core);
 		std::ofstream freq_file(freq_fn);
 		freq_file << freq;
 	}

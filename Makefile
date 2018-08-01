@@ -4,7 +4,7 @@ CONFIG_DIR ?= /etc
 COMMAND_PIPE ?= /var/run/throttle
 
 # Compiler and linker flags
-CXXFLAGS = -Wall -std=c++11 -O3
+CXXFLAGS += -Wall -Wextra -std=c++11 -O3
 LFLAGS = -Wall $(LIBOPTIONS)
 
 # Files and libraries

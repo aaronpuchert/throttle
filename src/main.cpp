@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	sigaddset(&signals, SIGTERM);
 	sigprocmask(SIG_BLOCK, &signals, nullptr);
 
-	struct timespec wait_time{wait, 0};
+	const struct timespec wait_time{wait, 0};
 
 	try {
 		// create Throttle object
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 			throttle();
 		while (sigtimedwait(&signals, nullptr, &wait_time) == -1);
 	}
-	catch (std::runtime_error ex) {
+	catch (const std::runtime_error& ex) {
 		std::cerr << "Error: " <<  ex.what() << std::endl;
 		return 1;
 	}
