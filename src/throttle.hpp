@@ -1,12 +1,11 @@
 #ifndef THROTTLE_HPP
 #define THROTTLE_HPP
 
-#include <set>
-#include <map>
 #include <fstream>
 #include <sstream>
-#include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
 
 #ifdef DEBUG
 #include <iostream>
@@ -27,25 +26,22 @@ class Throttle;
 class Conf {
 public:
 	Conf(const char *config_fn);
+	const std::string& GetAttr(const char *name) const;
 	template<typename T>
-		void GetAttr(const std::string &name, T *output) const;
+		void GetAttr(const char *name, T *output) const;
 
 private:
 	template<typename T> static void parse(const std::string &str, T *ret);
-	template<typename T> static void parse(const std::string &str, std::set<T> *ret);
+	template<typename T> static void parse(const std::string &str, std::vector<T> *ret);
 
-	// attributes
-	std::map<std::string, std::string> attributes;
+	// Sorted lexicographically by the first component.
+	std::vector<std::pair<std::string, std::string>> attributes;
 };
 
 // IMPLEMENTATION OF THE TEMPLATES
-template<typename T> void Conf::GetAttr(const std::string &name, T* output) const
+template<typename T> void Conf::GetAttr(const char *name, T* output) const
 {
-	auto attr = attributes.find(name);
-	if (attr != attributes.end())
-		parse(attr->second, output);
-	else
-		throw std::runtime_error("No such attribute: " + name);
+	parse(GetAttr(name), output);
 }
 
 // Well, let's try something general first
@@ -62,13 +58,13 @@ template<> inline void Conf::parse<std::string>(const std::string &str, std::str
 }
 
 // For sets we do something completely different
-template<typename T> void Conf::parse(const std::string &str, std::set<T> *ret)
+template<typename T> void Conf::parse(const std::string &str, std::vector<T> *ret)
 {
 	std::istringstream stream(str);
 	T cur;
 
 	while (stream >> cur)
-		ret->insert(cur);
+		ret->push_back(cur);
 }
 
 //----------------------------------
@@ -92,14 +88,11 @@ private:
 
 	// commands
 	enum Command {
-		DEFAULT = 0,
 		SET_MAX,
 		SET_MIN,
 		SET_FREQ,
 		RESET
 	};
-
-	static const std::map<std::string, Command> translate;
 };
 
 //---------------------------------------
@@ -145,8 +138,8 @@ private:
 	// temperature thresholds
 	int temp_max, temp_min;
 
-	// frequencies
-	std::set<int> freqs;
+	// Sorted frequencies.
+	std::vector<int> freqs;
 	int freq;
 
 	// dynamics

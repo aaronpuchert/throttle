@@ -1,10 +1,13 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <algorithm>
+#include <iterator>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include "throttle.hpp"
 
 /**
@@ -19,7 +22,7 @@ Conf::Conf(const char *config_fn) {
 	if (!conf_file)
 		throw std::runtime_error(std::string("Couldn't open config file '") + config_fn + '\'');
 
-	// read every line and put it in the map
+	// Read every line and put it in the list.
 	char line[LINE_LENGTH];
 	std::string name;
 
@@ -37,20 +40,24 @@ Conf::Conf(const char *config_fn) {
 
 		DEBUG_PRINT("[Conf] " << name << " = " << line);
 
-		// write into map
-		attributes[name] = std::string(line);
+		// Write into attribute list
+		attributes.emplace_back(name, std::string(line));
 	}
 }
 
-/**
- * Translation table for a command queue.
- */
-const std::map<std::string, CommQueue::Command> CommQueue::translate = {
-	{"max", CommQueue::SET_MAX},
-	{"min", CommQueue::SET_MIN},
-	{"freq", CommQueue::SET_FREQ},
-	{"reset", CommQueue::RESET}
-};
+const std::string& Conf::GetAttr(const char *name) const
+{
+	auto it = std::find_if(attributes.begin(), attributes.end(),
+		[name](const std::pair<std::string, std::string>& p)
+		{
+			return p.first == name;
+		});
+
+	if (it != attributes.end())
+		return it->second;
+	else
+		throw std::runtime_error(std::string("No such attribute: ") + name);
+}
 
 /**
  * Construct a command queue.
@@ -105,10 +112,25 @@ void CommQueue::processCommand(const std::string &comm)
 	stream >> command;
 
 	int value;
-	switch (translate.find(command)->second) {
-	case DEFAULT:		// we land here if "command" is not found
+
+	static constexpr std::pair<const char*, CommQueue::Command> translate[] = {
+		{"max", CommQueue::SET_MAX},
+		{"min", CommQueue::SET_MIN},
+		{"freq", CommQueue::SET_FREQ},
+		{"reset", CommQueue::RESET}
+	};
+
+	auto it = std::find_if(std::begin(translate), std::end(translate),
+		[&command](const std::pair<const char*, CommQueue::Command>& p)
+		{
+			return command == p.first;
+		});
+	if (it == std::end(translate)) {
 		DEBUG_PRINT("[CommQueue] Ignored unknown command: " << command);
-		break;
+		return;
+	}
+
+	switch (it->second) {
 	case SET_MIN:
 		stream >> value;
 		Throt->setMinTemp(value);

@@ -1,4 +1,5 @@
 #include "throttle.hpp"
+#include <algorithm>
 
 /**
  * Constructor of a Throttle object. The argument config_fn
@@ -16,6 +17,7 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn)
 	conf.GetAttr("freq_set_prefix", &freq_fn_prefix);
 	conf.GetAttr("freq_set_suffix", &freq_fn_suffix);
 	conf.GetAttr("freq_list", &freqs);
+	std::sort(freqs.begin(), freqs.end());
 	conf.GetAttr("temp_min", &temp_min);
 	conf.GetAttr("temp_max", &temp_max);
 	conf.GetAttr("wait", &wait_after_adjust);
@@ -58,7 +60,7 @@ void Throttle::operator()()
 void Throttle::adjust()
 {
 	int temp = readTemp();
-	std::set<int>::iterator new_freq = freqs.end();
+	std::vector<int>::iterator new_freq = freqs.end();
 
 	DEBUG_PRINT("[Throttle] Temperature: " << (float)temp/1000 << "°C");
 
@@ -68,11 +70,15 @@ void Throttle::adjust()
 
 	// If the temperature exceeds a threshold, find the next best frequency.
 	if (temp > temp_max && stabilize >= 0) {
-		new_freq = --freqs.lower_bound(freq);
+		new_freq = std::lower_bound(freqs.begin(), freqs.end(), freq);
+		if (new_freq == freqs.begin())
+			return;     // There is nothing we can do.
+		else
+			--new_freq;
 		stabilize = -wait_after_adjust;
 	}
 	if (temp < temp_min && stabilize <= 0) {
-		new_freq = freqs.upper_bound(freq);
+		new_freq = std::upper_bound(freqs.begin(), freqs.end(), freq);
 		stabilize = wait_after_adjust;
 	}
 
