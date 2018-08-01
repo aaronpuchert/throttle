@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 // How many seconds shall we wait between updates?
-static const int wait = 3;
+static constexpr int wait = 3;
 
 /**
  * Main function.

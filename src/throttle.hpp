@@ -16,7 +16,7 @@
 #endif
 
 // Maximum config file line length
-#define LINE_LENGTH 1024
+constexpr std::streamsize LINE_LENGTH = 1024;
 
 // forward declaring the classes
 class Throttle;
