@@ -3,11 +3,10 @@
 
 #include <set>
 #include <map>
-#include <queue>
 #include <fstream>
-#include <exception>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
+#include <string>
 
 #ifdef DEBUG
 #include <iostream>
@@ -20,8 +19,6 @@
 #define LINE_LENGTH 1024
 
 // forward declaring the classes
-class Conf;
-class CommQueue;
 class Throttle;
 
 //---------------------------------------------

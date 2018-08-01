@@ -1,7 +1,7 @@
 #include "throttle.hpp"
 #include <iostream>
-#include <unistd.h>
 #include <signal.h>
+#include <stdexcept>
 
 // How many seconds shall we wait between updates?
 static const int wait = 3;
