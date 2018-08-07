@@ -109,47 +109,33 @@ void CommQueue::update()
 void CommQueue::processCommand(const std::string &comm)
 {
 	std::istringstream stream(comm);
+
 	std::string command;
 	stream >> command;
 
-	int value;
-
-	static constexpr std::pair<const char*, CommQueue::Command> translate[] = {
-		{"max", CommQueue::SET_MAX},
-		{"min", CommQueue::SET_MIN},
-		{"freq", CommQueue::SET_FREQ},
-		{"reset", CommQueue::RESET}
-	};
-
-	auto it = std::find_if(std::begin(translate), std::end(translate),
-		[&command](const std::pair<const char*, CommQueue::Command>& p)
-		{
-			return command == p.first;
-		});
-	if (it == std::end(translate)) {
-		DEBUG_PRINT("[CommQueue] Ignored unknown command: " << command);
-		return;
+	if (command == "min") {
+		int temp;
+		stream >> temp;
+		Throt->setMinTemp(temp);
+		DEBUG_PRINT("[CommQueue] Set minimum temperature to " << temp);
 	}
-
-	switch (it->second) {
-	case SET_MIN:
-		stream >> value;
-		Throt->setMinTemp(value);
-		DEBUG_PRINT("[CommQueue] Set minimum temperature to " << value);
-		break;
-	case SET_MAX:
-		stream >> value;
-		Throt->setMaxTemp(value);
-		DEBUG_PRINT("[CommQueue] Set maximum temperature to " << value);
-		break;
-	case SET_FREQ:
-		stream >> value;
-		Throt->setOverrideFreq(value);
-		DEBUG_PRINT("[CommQueue] Set frequency to " << value);
-		break;
-	case RESET:
+	else if (command == "max") {
+		int temp;
+		stream >> temp;
+		Throt->setMaxTemp(temp);
+		DEBUG_PRINT("[CommQueue] Set maximum temperature to " << temp);
+	}
+	else if (command == "freq") {
+		int freq;
+		stream >> freq;
+		Throt->setOverrideFreq(freq);
+		DEBUG_PRINT("[CommQueue] Set frequency to " << freq);
+	}
+	else if (command == "reset") {
 		Throt->setOverrideFreq(0);
 		DEBUG_PRINT("[CommQueue] Reset mechanism");
-		break;
+	}
+	else {
+		DEBUG_PRINT("[CommQueue] Ignored unknown command: " << command);
 	}
 }

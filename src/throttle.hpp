@@ -85,14 +85,6 @@ private:
 
 	// command pipe file descriptor
 	int comm_file;
-
-	// commands
-	enum Command {
-		SET_MAX,
-		SET_MIN,
-		SET_FREQ,
-		RESET
-	};
 };
 
 //---------------------------------------
