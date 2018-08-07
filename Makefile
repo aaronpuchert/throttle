@@ -4,7 +4,8 @@ CONFIG_DIR ?= /etc
 COMMAND_PIPE ?= /var/run/throttle
 
 # Compiler and linker flags
-CXXFLAGS += -Wall -Wextra -std=c++11 -O3
+CXXFLAGS += -Wall -Wextra -std=c++11
+OPTFLAGS ?= -O3
 LFLAGS = -Wall $(LIBOPTIONS)
 
 # Files and libraries
@@ -30,7 +31,7 @@ throttle: $(OBJS) throttle.conf
 	$(CXX) $(LFLAGS) -o throttle $(OBJS)
 
 $(OBJS): %.o: %.cpp src/throttle.hpp
-	$(CXX) -c $(CXXFLAGS) -o $@ $<
+	$(CXX) -c -DNDEBUG $(OPTFLAGS) $(CXXFLAGS) -o $@ $<
 
 # Configuration
 throttle.conf:
@@ -44,7 +45,7 @@ debug/throttle: $(DEBUG_OBJS)
 	$(CXX) -g $(LFLAGS) -o $@ $(DEBUG_OBJS)
 
 $(DEBUG_OBJS): %-debug.o: %.cpp src/throttle.hpp
-	$(CXX) -c -g -DDEBUG $(CXXFLAGS) -o $@ $<
+	$(CXX) -c -g $(CXXFLAGS) -o $@ $<
 
 debug/throttle.conf:
 	(cd debug; ../config $(DEBUG_CORES) >throttle.conf)

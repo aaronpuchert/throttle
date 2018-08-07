@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-#ifdef DEBUG
+#ifndef NDEBUG
 #include <iostream>
 #define DEBUG_PRINT(...) std::cout << __VA_ARGS__ << std::endl
 #else
