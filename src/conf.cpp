@@ -91,11 +91,12 @@ void CommQueue::update()
 {
 	char buf[LINE_LENGTH];
 	ssize_t ret;
-	do {
+	while (true) {
 		ret = read(comm_file, buf, LINE_LENGTH-1);
-		if (ret > 0)
-			processCommand(std::string(buf, ret));
-	} while (ret > 0);
+		if (ret <= 0)
+			break;
+		processCommand(std::string(buf, ret));
+	}
 
 	// This should be because there's nothing more to read
 	if (ret != 0 && errno != EAGAIN)
