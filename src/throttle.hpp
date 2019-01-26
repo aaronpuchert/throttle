@@ -1,7 +1,6 @@
 #ifndef THROTTLE_HPP
 #define THROTTLE_HPP
 
-#include <fstream>
 #include <sstream>
 #include <string>
 #include <utility>

@@ -1,5 +1,6 @@
 #include "throttle.hpp"
 #include <algorithm>
+#include <fstream>
 
 /**
  * Constructor of a Throttle object. The argument config_fn
