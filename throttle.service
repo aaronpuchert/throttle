@@ -4,5 +4,27 @@ Description=Temperature-based CPU throttling
 [Service]
 ExecStart=PREFIX/sbin/throttle CONFIG_FILE PIPE
 
+# "Sandboxing." We don't need a lot.
+CapabilityBoundingSet=
+MemoryDenyWriteExecute=yes
+NoNewPrivileges=yes
+PrivateNetwork=yes
+PrivateUsers=yes
+ProtectClock=yes
+ProtectControlGroups=yes
+PrivateDevices=yes
+ProtectHome=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=no
+RemoveIPC=yes
+RestrictAddressFamilies=none
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+# First two are used by the dynamic linker, unclear why they're not in @default.
+SystemCallFilter=arch_prctl mprotect @basic-io @file-system @io-event @signal
+
 [Install]
 WantedBy=multi-user.target
