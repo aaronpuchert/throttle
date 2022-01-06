@@ -40,17 +40,19 @@ throttle.conf:
 # Debug
 debug: debug/throttle debug/throttle.conf debug/pipe
 
+debug/:
+	mkdir -p debug
+
 debug/throttle: $(DEBUG_OBJS)
-	-mkdir debug
 	$(CXX) -g $(LFLAGS) -o $@ $(DEBUG_OBJS)
 
-$(DEBUG_OBJS): %-debug.o: %.cpp src/throttle.hpp
+$(DEBUG_OBJS): %-debug.o: %.cpp debug/ src/throttle.hpp
 	$(CXX) -c -g $(CXXFLAGS) -o $@ $<
 
-debug/throttle.conf:
+debug/throttle.conf: debug/
 	(cd debug; ../config $(DEBUG_CORES) >throttle.conf)
 
-debug/pipe:
+debug/pipe: debug/
 	mkfifo debug/pipe
 
 # Installation
