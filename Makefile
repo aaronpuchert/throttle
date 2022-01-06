@@ -17,11 +17,13 @@ DEBUG_OBJS := $(patsubst %.cpp, %-debug.o, $(CPPS))
 LIBS :=
 LIBOPTIONS := $(patsubst %, -l%, $(LIBS))
 
-# directory for service file
+# Derive systemd directories from prefix.
 ifeq ($(PREFIX),/usr)
   SYSTEMD := /usr/lib/systemd/system
+  TMPFILES := /usr/lib/tmpfiles.d
 else
   SYSTEMD := /etc/systemd/system
+  TMPFILES := /etc/tmpfiles.d
 endif
 
 DEBUG_CORES := 2
@@ -61,11 +63,13 @@ install: throttle
 	@install --verbose --mode=644 --owner=root throttle.conf $(CONFIG_DIR)
 	@sed "{s|PREFIX|$(PREFIX)|g; s|CONFIG_FILE|$(CONFIG_DIR)/throttle.conf|g; s|PIPE|$(COMMAND_PIPE)|g}" \
 	    throttle.service >$(SYSTEMD)/throttle.service
+	@echo "p $(COMMAND_PIPE) 660 root users - -" >$(TMPFILES)/throttle.conf
 
 uninstall:
 	-rm $(PREFIX)/sbin/throttle
 	-rm $(CONFIG_DIR)/throttle.conf
 	-rm $(SYSTEMD)/throttle.service
+	-rm $(TMPFILES)/throttle.conf
 
 # Cleaning up
 clean:
