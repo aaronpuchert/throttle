@@ -43,7 +43,7 @@ Parameters are passed to the program via a configuration file.
 If installed as a service, this is the file `/etc/trottle.conf`.
 A template is produced by the Makefile.
 Further, users can adjust some parameters at runtime by writing to a command pipe.
-If installed as a service, this is the file `/var/run/throttle`.
+If installed as a service, this is the file `/run/throttle`.
 Permissions should be set appropriately.
 (The systemd configuration file sets them such that users can write to the pipe.)
 
@@ -61,10 +61,10 @@ These were explained in the last section.
 
 Real-time control
 -----------------
-You can control the throttling in real-time by sending commands to `/var/run/throttle` (if installed as service, or any other file you set in the command line).
+You can control the throttling in real-time by sending commands to `/run/throttle` (if installed as service, or any other file you set in the command line).
 This can be done by
 
-	echo "<command>" >/var/run/throttle
+	echo "<command>" >/run/throttle
 
 Currently, the following commands are available:
 

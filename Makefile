@@ -1,7 +1,7 @@
 # Installation settings, max be overwritten
 PREFIX ?= /usr/local
 CONFIG_DIR ?= /etc
-COMMAND_PIPE ?= /var/run/throttle
+COMMAND_PIPE ?= /run/throttle
 
 # Compiler and linker flags
 CXXFLAGS += -Wall -Wextra -std=c++11
