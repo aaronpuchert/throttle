@@ -18,10 +18,10 @@ LIBS :=
 LIBOPTIONS := $(patsubst %, -l%, $(LIBS))
 
 # directory for service file
-GENSYSTEMD := /lib/systemd/system
-SYSTEMD := $(shell test -d /usr$(GENSYSTEMD) && echo /usr$(GENSYSTEMD))
-ifeq ($(SYSTEMD),)
-  SYSTEMD := $(shell test -d $(GENSYSTEMD) && echo $(GENSYSTEMD))
+ifeq ($(PREFIX),/usr)
+  SYSTEMD := /usr/lib/systemd/system
+else
+  SYSTEMD := /etc/systemd/system
 endif
 
 DEBUG_CORES := 2
