@@ -1,5 +1,5 @@
 # Installation settings, max be overwritten
-PREFIX ?= /usr
+PREFIX ?= /usr/local
 CONFIG_DIR ?= /etc
 COMMAND_PIPE ?= /var/run/throttle
 
