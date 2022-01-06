@@ -63,9 +63,9 @@ install: throttle
 	    throttle.service >$(SYSTEMD)/throttle.service
 
 uninstall:
-	rm -f $(PREFIX)/sbin/throttle
-	rm -f $(CONFIG_DIR)/throttle.conf
-	rm -f $(SYSTEMD)/throttle.service
+	-rm $(PREFIX)/sbin/throttle
+	-rm $(CONFIG_DIR)/throttle.conf
+	-rm $(SYSTEMD)/throttle.service
 
 # Cleaning up
 clean:
