@@ -48,13 +48,13 @@ debug/:
 debug/throttle: $(DEBUG_OBJS)
 	$(CXX) -g $(LFLAGS) -o $@ $(DEBUG_OBJS)
 
-$(DEBUG_OBJS): %-debug.o: %.cpp debug/ src/throttle.hpp
+$(DEBUG_OBJS): %-debug.o: %.cpp src/throttle.hpp | debug/
 	$(CXX) -c -g $(CXXFLAGS) -o $@ $<
 
-debug/throttle.conf: debug/
+debug/throttle.conf: | debug/
 	(cd debug; ../config $(DEBUG_CORES) >throttle.conf)
 
-debug/pipe: debug/
+debug/pipe: | debug/
 	mkfifo debug/pipe
 
 # Installation
