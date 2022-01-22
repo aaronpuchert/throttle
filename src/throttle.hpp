@@ -99,8 +99,24 @@ private:
 // Main class controlling the throttling
 //---------------------------------------
 class Throttle {
+	class FreqFilenames {
+	public:
+		FreqFilenames(const std::string& prefix, const std::string& suffix,
+		              unsigned numCores);
+		const char* operator[](unsigned core) const;
+		unsigned size() const { return numCores; }
+
+	private:
+		unsigned numCores;
+		mutable std::vector<std::string> templates;
+		size_t prefix_size;
+	};
+
 public:
-	Throttle(const char *config_fn, const char* pipe_fn);
+	static Throttle createFromConfig(const char *config_fn, const char* pipe_fn);
+
+	Throttle(std::string &&temp_filename, FreqFilenames &&freq_filenames,
+	         std::vector<int> &&frequencies, const char* pipe_fn, int wait);
 	void operator()();
 
 	/**
@@ -128,12 +144,9 @@ private:
 	void writeFreq() const;
 
 	// SETTINGS
-	// number of cores
-	int cores;
-
 	// files
 	std::string temp_fn;
-	std::string freq_fn_prefix, freq_fn_suffix;
+	FreqFilenames freq_fn;
 
 	// temperature thresholds
 	int temp_max, temp_min;

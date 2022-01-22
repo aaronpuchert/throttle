@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
 	try {
 		// create Throttle object
-		Throttle throttle(config_fn, pipe_fn);
+		Throttle throttle = Throttle::createFromConfig(config_fn, pipe_fn);
 
 		// Run the feedback loop
 		do

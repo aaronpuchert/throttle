@@ -2,34 +2,72 @@
 #include <algorithm>
 #include <fstream>
 
-/**
- * Constructor of a Throttle object. The argument config_fn
- * should be the name of the configuration file.
- */
-Throttle::Throttle(const char *config_fn, const char* pipe_fn)
-	: stabilize(0), queue(this, pipe_fn), override_freq(0)
+static unsigned log10(unsigned x)
+{
+	// Not the fastest implementation, but we don't expect very large numbers.
+	unsigned log = 0;
+	while ((x /= 10) != 0)
+		++log;
+	return log;
+}
+
+Throttle::FreqFilenames::FreqFilenames(
+	const std::string &prefix, const std::string &suffix, unsigned numCores)
+	: numCores(numCores), templates(log10(numCores) + 1), prefix_size(prefix.size())
+{
+	size_t suffix_size = suffix.size();
+	for (unsigned i = 0; i != templates.size(); ++i) {
+		templates[i].reserve(prefix_size + (i + 1) + suffix_size);
+		templates[i] = prefix;
+		templates[i].append(i + 1, '#');
+		templates[i] += suffix;
+		DEBUG_PRINT("[Throttle] Template for length " << i + 1 << ": " << templates[i]);
+	}
+}
+
+const char *Throttle::FreqFilenames::operator[](unsigned core) const
+{
+	unsigned bucket = log10(core);
+	std::string &ret = templates[bucket];
+	unsigned print = core;
+	do {
+		ret[prefix_size + bucket] = '0' + char(print % 10);
+		print /= 10;
+	} while (bucket--);
+	DEBUG_PRINT("[Throttle] Filename for core " << core << ": " << ret);
+	return ret.c_str();
+}
+
+Throttle Throttle::createFromConfig(const char *config_fn, const char* pipe_fn)
 {
 	// open the configuration file
 	Conf conf(config_fn);
 
 	// read all variables
-	cores = conf.ParseAttr<int>("cores");
-	temp_fn = conf.GetAttr("temp_file");
-	freq_fn_prefix = conf.GetAttr("freq_set_prefix");
-	freq_fn_suffix = conf.GetAttr("freq_set_suffix");
-	freqs = conf.ParseAttr<std::vector<int>>("freq_list");
+	std::string temp_fn = conf.GetAttr("temp_file");
+	std::vector<int> freqs = conf.ParseAttr<std::vector<int>>("freq_list");
 	std::sort(freqs.begin(), freqs.end());
-	temp_min = conf.ParseAttr<int>("temp_min");
-	temp_max = conf.ParseAttr<int>("temp_max");
-	wait_after_adjust = conf.ParseAttr<int>("wait");
 
-	// multiply temperatures with 1000
-	temp_min *= 1000;
-	temp_max *= 1000;
+	Throttle ret(std::move(temp_fn),
+	             FreqFilenames(conf.GetAttr("freq_set_prefix"),
+	                           conf.GetAttr("freq_set_suffix"),
+	                           conf.ParseAttr<unsigned>("cores")),
+	             std::move(freqs), pipe_fn, conf.ParseAttr<int>("wait"));
+	ret.setMinTemp(conf.ParseAttr<int>("temp_min"));
+	ret.setMaxTemp(conf.ParseAttr<int>("temp_max"));
+	return ret;
+}
 
+Throttle::Throttle(std::string &&temp_filename, FreqFilenames &&freq_filenames,
+                   std::vector<int> &&frequencies, const char* pipe_fn, int wait)
+	: temp_fn(std::move(temp_filename)),
+	  freq_fn(std::move(freq_filenames)),
+	  freqs(std::move(frequencies)),
+	  wait_after_adjust(wait),
+	  stabilize(0), queue(this, pipe_fn), override_freq(0)
+{
 	// read the current frequency (is that the right thing to do?)
-	std::ifstream freq_file(freq_fn_prefix + "0" + freq_fn_suffix);
-	freq_file >> freq;
+	std::ifstream(freq_fn[0]) >> freq;
 
 	DEBUG_PRINT("[Throttle] Initial frequency: " << (float)freq/1000 << " MHz");
 }
@@ -107,12 +145,10 @@ int Throttle::readTemp() const
 void Throttle::writeFreq() const
 {
 	DEBUG_PRINT("[Throttle] New frequency: " << (float)freq/1000 << " MHz");
-	std::string freq_fn = freq_fn_prefix + '#' + freq_fn_suffix;
 
 	// loop over the files, write the frequency in each
-	for (int core=0; core<cores; ++core) {
-		freq_fn[freq_fn_prefix.length()] = '0' + char(core);
-		std::ofstream freq_file(freq_fn);
+       for (unsigned core = 0; core != freq_fn.size(); ++core) {
+		std::ofstream freq_file(freq_fn[core]);
 		freq_file << freq;
 	}
 }
