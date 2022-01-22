@@ -27,43 +27,52 @@ public:
 	Conf(const char *config_fn);
 	const std::string& GetAttr(const char *name) const;
 	template<typename T>
-		void GetAttr(const char *name, T *output) const;
+	T ParseAttr(const char *name) const;
 
 private:
-	template<typename T> static void parse(const std::string &str, T *ret);
-	template<typename T> static void parse(const std::string &str, std::vector<T> *ret);
+	template<typename T>
+	struct Parser {
+		static T parse(const std::string &str);
+	};
+	template<typename T>
+	struct Parser<std::vector<T>> {
+		static std::vector<T> parse(const std::string &str);
+	};
 
 	// Sorted lexicographically by the first component.
 	std::vector<std::pair<std::string, std::string>> attributes;
 };
 
 // IMPLEMENTATION OF THE TEMPLATES
-template<typename T> void Conf::GetAttr(const char *name, T* output) const
+template<typename T>
+T Conf::ParseAttr(const char *name) const
 {
-	parse(GetAttr(name), output);
+	return Parser<T>::parse(GetAttr(name));
 }
 
-// Well, let's try something general first
-template<typename T> void Conf::parse(const std::string &str, T *ret)
+template<typename T>
+T Conf::Parser<T>::parse(const std::string &str)
+{
+	T ret;
+	std::istringstream stream(str);
+	stream >> ret;
+	return ret;
+}
+
+// Unsupported, GetAttr should be used directly.
+template<>
+std::string Conf::Parser<std::string>::parse(const std::string &) = delete;
+
+template<typename T>
+std::vector<T> Conf::Parser<std::vector<T>>::parse(const std::string &str)
 {
 	std::istringstream stream(str);
-	stream >> *ret;
-}
 
-// ... but we might want to specialize
-template<> inline void Conf::parse<std::string>(const std::string &str, std::string *ret)
-{
-	*ret = str;
-}
-
-// For sets we do something completely different
-template<typename T> void Conf::parse(const std::string &str, std::vector<T> *ret)
-{
-	std::istringstream stream(str);
+	std::vector<T> ret;
 	T cur;
-
 	while (stream >> cur)
-		ret->push_back(cur);
+		ret.push_back(cur);
+	return ret;
 }
 
 //----------------------------------

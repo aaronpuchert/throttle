@@ -13,15 +13,15 @@ Throttle::Throttle(const char *config_fn, const char* pipe_fn)
 	Conf conf(config_fn);
 
 	// read all variables
-	conf.GetAttr("cores", &cores);
-	conf.GetAttr("temp_file", &temp_fn);
-	conf.GetAttr("freq_set_prefix", &freq_fn_prefix);
-	conf.GetAttr("freq_set_suffix", &freq_fn_suffix);
-	conf.GetAttr("freq_list", &freqs);
+	cores = conf.ParseAttr<int>("cores");
+	temp_fn = conf.GetAttr("temp_file");
+	freq_fn_prefix = conf.GetAttr("freq_set_prefix");
+	freq_fn_suffix = conf.GetAttr("freq_set_suffix");
+	freqs = conf.ParseAttr<std::vector<int>>("freq_list");
 	std::sort(freqs.begin(), freqs.end());
-	conf.GetAttr("temp_min", &temp_min);
-	conf.GetAttr("temp_max", &temp_max);
-	conf.GetAttr("wait", &wait_after_adjust);
+	temp_min = conf.ParseAttr<int>("temp_min");
+	temp_max = conf.ParseAttr<int>("temp_max");
+	wait_after_adjust = conf.ParseAttr<int>("wait");
 
 	// multiply temperatures with 1000
 	temp_min *= 1000;
