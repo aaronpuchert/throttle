@@ -99,7 +99,7 @@ void Throttle::operator()()
 void Throttle::adjust()
 {
 	int temp = readTemp();
-	std::vector<int>::iterator new_freq = freqs.end();
+	std::vector<int>::const_iterator new_freq = freqs.end();
 
 	DEBUG_PRINT("[Throttle] Temperature: " << (float)temp/1000 << "°C");
 

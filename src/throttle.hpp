@@ -145,18 +145,18 @@ private:
 
 	// SETTINGS
 	// files
-	std::string temp_fn;
-	FreqFilenames freq_fn;
+	const std::string temp_fn;
+	const FreqFilenames freq_fn;
 
 	// temperature thresholds
 	int temp_max, temp_min;
 
 	// Sorted frequencies.
-	std::vector<int> freqs;
+	const std::vector<int> freqs;
 	int freq;
 
 	// dynamics
-	int wait_after_adjust;
+	const int wait_after_adjust;
 
 	// Set to +wait_after_adjust after increasing frequency, to -wait_after_adjust after decreasing it.
 	// Then it is diminished in absolute value after each step of adjusting.

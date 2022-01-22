@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	sigaddset(&signals, SIGTERM);
 	sigprocmask(SIG_BLOCK, &signals, nullptr);
 
-	const struct timespec wait_time{wait, 0};
+	constexpr struct timespec wait_time{wait, 0};
 
 	try {
 		// create Throttle object
