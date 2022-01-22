@@ -55,7 +55,7 @@ debug/throttle.conf: | debug/
 	(cd debug; ../config $(DEBUG_CORES) >throttle.conf)
 
 debug/pipe: | debug/
-	mkfifo debug/pipe
+	[ -p debug/pipe ] || mkfifo debug/pipe
 
 # Installation
 install: throttle
